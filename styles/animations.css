@@ -1,0 +1,1101 @@
+/* Animations for Fruity Chat */
+
+/* Message Entry Animation */
+@keyframes message-enter {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+.message {
+    animation: message-enter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Typing Indicator Animation */
+@keyframes typing-bounce {
+    0%, 80%, 100% { 
+        transform: scale(0.8); 
+        opacity: 0.5; 
+    }
+    40% { 
+        transform: scale(1.2); 
+        opacity: 1; 
+    }
+}
+
+.typing-dot {
+    animation: typing-bounce 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+/* Slide Animations */
+@keyframes slide-in-right {
+    from { 
+        transform: translateX(100px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes slide-in-left {
+    from { 
+        transform: translateX(-100px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+}
+
+@keyframes slide-up-center {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Fade Animations */
+@keyframes fade-in {
+    from { 
+        opacity: 0; 
+    }
+    to { 
+        opacity: 1; 
+    }
+}
+
+@keyframes fade-out {
+    from { 
+        opacity: 1; 
+    }
+    to { 
+        opacity: 0; 
+    }
+}
+
+/* Shimmer Loading Animation */
+@keyframes loading-shimmer {
+    0% { 
+        transform: translateX(-100%); 
+    }
+    100% { 
+        transform: translateX(200%); 
+    }
+}
+
+/* Fruit Drop Animation - Увеличена скорость */
+@keyframes fruit-drop {
+    0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.fruit {
+    animation: fruit-drop linear forwards;
+}
+
+/* Bounce Animation */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Rotate Animation */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Scale Animation */
+@keyframes scale-up {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Shake Animation */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* Heartbeat Animation */
+@keyframes heartbeat {
+    0% {
+        transform: scale(1);
+    }
+    25% {
+        transform: scale(1.1);
+    }
+    50% {
+        transform: scale(1);
+    }
+    75% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Ripple Animation */
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Blink Animation */
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* Jelly Animation */
+@keyframes jelly {
+    0%, 100% {
+        transform: scale(1, 1);
+    }
+    25% {
+        transform: scale(0.9, 1.1);
+    }
+    50% {
+        transform: scale(1.1, 0.9);
+    }
+    75% {
+        transform: scale(0.95, 1.05);
+    }
+}
+
+/* Modal Entrance Animations */
+@keyframes modal-slide-up {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes modal-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Status Message Animation */
+@keyframes status-slide-down {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -100%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* Avatar Hover Animation */
+@keyframes avatar-float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Chat Item Hover Animation */
+@keyframes chat-item-glow {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Button Click Animation */
+@keyframes button-click {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Scroll Indicator Animation */
+@keyframes scroll-indicator {
+    0% {
+        opacity: 0.5;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(10px);
+    }
+}
+
+/* Sparkle Animation */
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Fact Category Animation */
+@keyframes fact-category-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fact Text Animation */
+@keyframes fact-text-appear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fact Category Badge Animation */
+@keyframes category-badge-pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+}
+
+/* Application Classes */
+.fade-in {
+    animation: fade-in 0.5s ease-out;
+}
+
+.fade-out {
+    animation: fade-out 0.5s ease-out;
+}
+
+.scale-up {
+    animation: scale-up 0.3s ease-out;
+}
+
+.bounce {
+    animation: bounce 0.5s ease-in-out;
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+.rotate {
+    animation: rotate 2s linear infinite;
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+.jelly {
+    animation: jelly 0.5s ease-in-out;
+}
+
+.heartbeat {
+    animation: heartbeat 1s ease-in-out;
+}
+
+/* Chat Container Animation */
+.chat-container {
+    animation: slide-up-center 0.5s ease-out;
+}
+
+/* Modal Animation */
+.modal.active .modal-content {
+    animation: modal-slide-up 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Status Message Animation */
+.status-message.show {
+    animation: status-slide-down 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Avatar Animation */
+.avatar:hover .avatar-inner {
+    animation: avatar-float 1s ease-in-out infinite;
+}
+
+/* Button Click Animation */
+.btn-primary:active,
+.btn-secondary:active,
+.btn-icon:active {
+    animation: button-click 0.2s ease-out;
+}
+
+/* Chat Item Hover Animation */
+.chat-item:hover {
+    animation: chat-item-glow 2s infinite;
+}
+
+/* Fact Category Styles */
+.fact-category {
+    text-align: center;
+    margin-bottom: 1rem;
+    animation: fact-category-appear 0.5s ease-out 0.3s both;
+}
+
+.fact-content {
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-radius: var(--radius-2xl);
+    padding: var(--spacing-2xl);
+    margin: var(--spacing-lg) 0;
+    border: 2px solid #dbeafe;
+    position: relative;
+    overflow: hidden;
+}
+
+.fact-content::before {
+    content: '✨';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1.5rem;
+    opacity: 0.5;
+    animation: sparkle 2s infinite;
+}
+
+.fact-content p {
+    font-style: italic;
+    line-height: 1.7;
+    color: #1e293b;
+    font-size: 1.125rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    animation: fact-text-appear 0.5s ease-out 0.5s both;
+}
+
+/* Category Badge */
+.category-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    animation: category-badge-pulse 2s infinite ease-in-out;
+}
+
+.category-science {
+    background: linear-gradient(135deg, #93c5fd 0%, #3b82f6 100%);
+    color: white;
+}
+
+.category-nature {
+    background: linear-gradient(135deg, #86efac 0%, #16a34a 100%);
+    color: white;
+}
+
+.category-space {
+    background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%);
+    color: white;
+}
+
+.category-history {
+    background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+    color: white;
+}
+
+.category-tech {
+    background: linear-gradient(135deg, #fca5a5 0%, #ef4444 100%);
+    color: white;
+}
+
+/* Fact Fruit Icon Animation */
+#factFruitIcon {
+    animation: bounce 1s infinite ease-in-out;
+}
+
+/* Fact Modal Specific Animations */
+.modal.active #factFruitIcon {
+    animation: rotate 10s linear infinite;
+}
+
+/* Loading States */
+.loading-shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: loading-shimmer 1.5s infinite;
+}
+
+/* Fact Number Animation */
+#factNumber {
+    display: inline-block;
+    animation: heartbeat 1.5s infinite ease-in-out;
+}
+
+/* Fact Modal Entrance Animation */
+#factsModal.active .modal-content {
+    animation: modal-slide-up 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Fact Text Emphasis Animation */
+@keyframes fact-emphasis {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+.fact-content p {
+    animation: fact-emphasis 3s infinite ease-in-out;
+}
+
+/* Fact Share Button Animation */
+@keyframes share-success {
+    0% {
+        transform: scale(1);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%);
+    }
+    50% {
+        transform: scale(1.1);
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.9) 0%, rgba(21, 128, 61, 0.9) 100%);
+    }
+    100% {
+        transform: scale(1);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%);
+    }
+}
+
+.btn-secondary:has(.fa-share-alt):hover {
+    animation: jelly 0.5s ease-in-out;
+}
+
+/* Fact Random Button Animation */
+.btn-primary:has(.fa-random):hover {
+    animation: rotate 0.5s ease-in-out;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .message,
+    .fruit,
+    .avatar-inner,
+    .chat-item,
+    .btn-primary,
+    .btn-secondary,
+    .btn-icon,
+    .modal-content,
+    .status-message,
+    .fact-content p,
+    .fact-category,
+    #factFruitIcon,
+    #factNumber,
+    .category-badge {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .typing-dot {
+        animation: none;
+    }
+    
+    .fact-content::before {
+        animation: none;
+    }
+}
+
+/* Dark Mode Support (if added later) */
+@media (prefers-color-scheme: dark) {
+    .fact-content {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border-color: #334155;
+    }
+    
+    .fact-content p {
+        color: #e2e8f0;
+    }
+}
+
+/* Mobile Optimizations for Fact Modal */
+@media (max-width: 768px) {
+    .fact-content {
+        padding: var(--spacing-lg);
+        min-height: 120px;
+    }
+    
+    .fact-content p {
+        font-size: 1rem;
+    }
+    
+    .fact-category {
+        margin-bottom: 0.75rem;
+    }
+    
+    .category-badge {
+        font-size: 0.625rem;
+        padding: 0.2rem 0.6rem;
+    }
+}
+
+/* Small Mobile Optimizations */
+@media (max-width: 480px) {
+    .fact-content {
+        padding: var(--spacing-md);
+        min-height: 100px;
+    }
+    
+    .fact-content p {
+        font-size: 0.9375rem;
+    }
+    
+    #factFruitIcon {
+        font-size: 1.5rem;
+        top: 5px;
+        right: 5px;
+    }
+}
+
+/* Print Styles for Facts */
+@media print {
+    .fact-content {
+        background: white !important;
+        border: 2px solid #000 !important;
+        box-shadow: none !important;
+    }
+    
+    .fact-content p {
+        color: #000 !important;
+    }
+    
+    .fact-content::before {
+        display: none;
+    }
+    
+    #factFruitIcon {
+        display: none;
+    }
+    
+    .category-badge {
+        background: #f0f0f0 !important;
+        color: #000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .fact-content {
+        border: 3px solid #000;
+    }
+    
+    .category-badge {
+        border: 2px solid #000;
+    }
+}
+
+/* Animation for New Fact Appearance */
+@keyframes new-fact-highlight {
+    0% {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    }
+    100% {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    }
+}
+
+.fact-content.new-fact {
+    animation: new-fact-highlight 1s ease-out;
+}
+
+/* Smooth Transition for Fact Changes */
+.fact-content p {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fact-content.fade-out p {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.fact-content.fade-in p {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Fact Category Icon Animation */
+.fact-category-icon {
+    display: inline-block;
+    margin-right: 0.5rem;
+    animation: bounce 1s infinite ease-in-out;
+}
+
+/* Fact Share Success Animation */
+.share-success {
+    animation: share-success 0.5s ease-in-out;
+}
+
+/* Fact Loading Animation */
+@keyframes fact-loading {
+    0% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+
+#factText.loading {
+    animation: fact-loading 1.5s infinite ease-in-out;
+}
+
+/* Fact Counter Animation */
+@keyframes counter-increment {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+#factNumber.changed {
+    animation: counter-increment 0.3s ease-in-out;
+}
+
+/* Responsive Fact Animations */
+@media (max-height: 600px) {
+    .fact-content {
+        min-height: 100px;
+        padding: var(--spacing-lg);
+    }
+    
+    .fact-content p {
+        font-size: 0.9375rem;
+        line-height: 1.5;
+    }
+}
+
+/* Touch Device Optimizations for Facts */
+@media (hover: none) and (pointer: coarse) {
+    .category-badge:active {
+        animation: jelly 0.3s ease-out;
+    }
+    
+    .fact-content:active {
+        animation: scale-up 0.2s ease-out;
+    }
+}
+
+/* Performance Optimizations */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Accessibility: Focus styles for fact elements */
+.fact-content:focus-within {
+    outline: 3px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+.category-badge:focus {
+    outline: 2px solid #000;
+    outline-offset: 1px;
+}
+
+/* Анимация для модального окна фактов */
+#factsModal {
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s;
+}
+
+#factsModal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#factsModal.active .modal-content {
+    animation: modal-slide-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Анимация для текста факта при загрузке */
+.fact-text-entrance {
+    animation: fact-text-appear 0.5s ease-out 0.2s both;
+}
+
+/* Анимация для иконки факта */
+#factFruitIcon {
+    animation: rotate 20s linear infinite;
+}
+
+#factFruitIcon:hover {
+    animation: bounce 1s ease-in-out infinite;
+}
+
+/* Анимация для категории */
+.fact-category {
+    animation: fact-category-appear 0.4s ease-out 0.1s both;
+}
+
+/* Анимация для счетчика фактов */
+#factNumber {
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+#factNumber.changed {
+    animation: counter-increment 0.5s ease-in-out;
+}
+
+/* Анимация для оверлея модального окна */
+.modal-overlay {
+    transition: opacity 0.3s ease;
+}
+
+#factsModal.active .modal-overlay {
+    animation: modal-fade-in 0.3s ease-out;
+}
+
+/* Анимация для кнопки закрытия */
+#factsModal .btn-icon {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#factsModal .btn-icon:hover {
+    transform: rotate(90deg) scale(1.1);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.2) 100%);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Анимация для содержимого факта */
+.fact-content {
+    animation: scale-up 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+}
+
+/* Темный режим для модального окна фактов */
+@media (prefers-color-scheme: dark) {
+    #factsModal .modal-content {
+        background: rgba(30, 41, 59, 0.95);
+        border-color: rgba(51, 65, 85, 0.6);
+    }
+    
+    #factsModal .fact-content {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+        border-color: rgba(51, 65, 85, 0.8);
+    }
+    
+    #factsModal .fact-content p {
+        color: #e2e8f0;
+    }
+    
+    #factsModal .modal-title {
+        color: #f1f5f9;
+    }
+    
+    #factsModal .modal-actions .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+    
+    #factsModal .modal-actions .btn-secondary {
+        background: rgba(71, 85, 105, 0.9);
+        border-color: rgba(100, 116, 139, 0.6);
+        color: #e2e8f0;
+    }
+}
+
+/* Адаптивные стили для модального окна фактов */
+@media (max-width: 768px) {
+    #factsModal .modal-content {
+        width: 95%;
+        max-width: 95%;
+        margin: 10px;
+    }
+    
+    #factsModal .fact-content {
+        padding: var(--spacing-lg);
+        min-height: 120px;
+    }
+    
+    #factsModal .fact-content p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #factsModal .modal-content {
+        width: 98%;
+        max-width: 98%;
+        border-radius: var(--radius-2xl);
+    }
+    
+    #factsModal .modal-header,
+    #factsModal .modal-body,
+    #factsModal .modal-actions {
+        padding: var(--spacing-lg);
+    }
+    
+    #factsModal .fact-content {
+        padding: var(--spacing-md);
+        min-height: 100px;
+    }
+    
+    #factsModal .fact-content p {
+        font-size: 0.9375rem;
+    }
+    
+    #factsModal .modal-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    #factsModal .modal-actions .btn-primary,
+    #factsModal .modal-actions .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Анимация для появления фактов с задержкой */
+@keyframes stagger-appear {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#factsModal .modal-header {
+    animation: stagger-appear 0.3s ease-out 0.1s both;
+}
+
+#factsModal .fact-category {
+    animation: stagger-appear 0.3s ease-out 0.2s both;
+}
+
+#factsModal .fact-content {
+    animation: stagger-appear 0.3s ease-out 0.3s both;
+}
+
+#factsModal .modal-actions {
+    animation: stagger-appear 0.3s ease-out 0.4s both;
+}
+
+/* Добавить в animations.css в конце файла: */
+
+/* Исправляем анимацию для модального окна фактов */
+#factsModal {
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+#factsModal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#factsModal.active .modal-content {
+    animation: modal-slide-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    position: relative;
+    margin: auto;
+}
+
+/* Исправляем keyframes для центрирования */
+@keyframes modal-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Улучшаем адаптивные стили */
+@media (max-width: 768px) {
+    #factsModal .modal-content {
+        width: 95% !important;
+        max-width: 95% !important;
+        margin: 10px !important;
+    }
+    
+    #factsModal .fact-content {
+        padding: var(--spacing-lg);
+        min-height: 120px;
+    }
+    
+    #factsModal .fact-content p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #factsModal .modal-content {
+        width: 98% !important;
+        max-width: 98% !important;
+        border-radius: var(--radius-2xl);
+        margin: 5px !important;
+    }
+    
+    #factsModal .modal-header,
+    #factsModal .modal-body,
+    #factsModal .modal-actions {
+        padding: var(--spacing-lg);
+    }
+    
+    #factsModal .fact-content {
+        padding: var(--spacing-md);
+        min-height: 100px;
+    }
+    
+    #factsModal .fact-content p {
+        font-size: 0.9375rem;
+    }
+    
+    #factsModal .modal-actions {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    #factsModal .modal-actions .btn-primary,
+    #factsModal .modal-actions .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Для ландшафтной ориентации */
+@media (max-height: 600px) {
+    #factsModal .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    #factsModal .fact-content {
+        min-height: 80px;
+        padding: var(--spacing-md);
+    }
+}
