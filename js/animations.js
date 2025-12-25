@@ -116,6 +116,34 @@ window.appAnimations = {
             }, 10);
         }
     },
+    
+    // Улучшенная анимация для модального окна фактов
+    animateFactModalEnhanced: function(modal) {
+        if (!modal) return;
+        
+        const content = modal.querySelector('.modal-content');
+        if (content) {
+            // Сбрасываем стили для центрирования
+            content.style.position = 'relative';
+            content.style.margin = 'auto';
+            content.style.opacity = '0';
+            content.style.transform = 'translateY(40px) scale(0.95)';
+            
+            // Используем requestAnimationFrame для плавной анимации
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    content.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    content.style.opacity = '1';
+                    content.style.transform = 'translateY(0) scale(1)';
+                    
+                    // Убираем transition после анимации
+                    setTimeout(() => {
+                        content.style.transition = '';
+                    }, 400);
+                });
+            });
+        }
+    },
 
     // Анимация для текста факта
     animateFactText: function(element) {
