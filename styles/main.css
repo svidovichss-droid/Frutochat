@@ -11,6 +11,7 @@
     --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
     --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
     --fun-gradient: linear-gradient(135deg, #FFD166 0%, #FFB347 100%);
+    --eco-gradient: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
     
     /* Glass Morphism Colors */
     --glass-bg: rgba(255, 255, 255, 0.85);
@@ -879,6 +880,17 @@ body {
     transform: rotate(12deg) scale(0.95);
 }
 
+.btn-icon.eco-active {
+    background: var(--eco-gradient);
+    color: white;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.btn-icon.eco-active:hover {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    color: white;
+}
+
 .btn-clear-all {
     background: var(--danger-gradient);
     color: white;
@@ -1216,6 +1228,14 @@ body {
     will-change: transform, opacity;
     pointer-events: none;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.eco-fruit {
+    opacity: 0.3 !important;
+    font-size: 20px !important;
+    filter: none !important;
+    text-shadow: none !important;
+    animation: fruit-drop-simple 1.5s linear forwards !important;
 }
 
 .animated-fruit {
@@ -2535,4 +2555,259 @@ a:focus-visible {
     .modal-title {
         font-size: 1.25rem;
     }
+}
+
+/* Дополнительные стили для центрирования модальных окон */
+#welcomeModal,
+#factsModal,
+#clearConfirmModal {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Улучшаем центрирование для всех модальных окон */
+.modal-content {
+    position: relative;
+    margin: auto;
+}
+
+/* Исправляем анимацию для всех модальных окон */
+.modal.active .modal-content {
+    animation: modal-slide-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Улучшаем адаптивность для всех модальных окон */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95% !important;
+        max-width: 95% !important;
+        margin: 10px auto !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        width: 98% !important;
+        max-width: 98% !important;
+        margin: 5px auto !important;
+    }
+}
+
+/* Экономичный режим - GPU оптимизация */
+body.eco-mode {
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(226, 232, 240, 0.8);
+    --sidebar-bg: rgba(248, 250, 252, 0.98);
+    --sidebar-border: rgba(226, 232, 240, 0.8);
+}
+
+body.eco-mode .glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+body.eco-mode .sidebar-glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+body.eco-mode .modal-content {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+body.eco-mode .bubble {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+body.eco-mode .avatar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    animation: none !important;
+}
+
+body.eco-mode .avatar-inner::before {
+    animation: none !important;
+}
+
+body.eco-mode .logo-icon {
+    box-shadow: 0 4px 6px rgba(102, 126, 234, 0.2) !important;
+}
+
+body.eco-mode .logo-icon::before {
+    animation: none !important;
+}
+
+body.eco-mode .btn-primary,
+body.eco-mode .btn-secondary,
+body.eco-mode .btn-icon,
+body.eco-mode .quick-action-btn,
+body.eco-mode .category-tag,
+body.eco-mode .feature-item,
+body.eco-mode .chat-item,
+body.eco-mode .fact-content,
+body.eco-mode .status-message,
+body.eco-mode .input-container,
+body.eco-mode .header,
+body.eco-mode .sidebar-content {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+body.eco-mode .btn-primary:hover,
+body.eco-mode .btn-secondary:hover,
+body.eco-mode .btn-icon:hover,
+body.eco-mode .quick-action-btn:hover,
+body.eco-mode .category-tag:hover,
+body.eco-mode .feature-item:hover,
+body.eco-mode .chat-item:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+body.eco-mode .fruit:not(.eco-fruit) {
+    display: none !important;
+}
+
+body.eco-mode .eco-fruit {
+    opacity: 0.3 !important;
+    font-size: 20px !important;
+    animation: fruit-drop-simple 1.5s linear forwards !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
+body.eco-mode .animated-fruit {
+    animation: none !important;
+}
+
+body.eco-mode .message {
+    animation: message-enter-simple 0.3s ease-out forwards !important;
+}
+
+body.eco-mode .modal.active .modal-content {
+    animation: modal-slide-up-simple 0.3s ease-out !important;
+}
+
+body.eco-mode .status-message.show {
+    animation: status-slide-down-simple 0.3s ease-out !important;
+}
+
+body.eco-mode .avatar:hover .avatar-inner {
+    animation: none !important;
+}
+
+body.eco-mode .chat-item:hover {
+    animation: none !important;
+}
+
+body.eco-mode #factFruitIcon {
+    animation: none !important;
+}
+
+body.eco-mode .fact-content::before {
+    animation: none !important;
+}
+
+body.eco-mode .fact-content p {
+    animation: none !important;
+}
+
+body.eco-mode #factNumber {
+    animation: none !important;
+}
+
+body.eco-mode .category-badge {
+    animation: none !important;
+}
+
+body.eco-mode .loading-shimmer::after {
+    animation: none !important;
+}
+
+/* Кнопка экономичного режима активна */
+.btn-icon.eco-active {
+    background: var(--eco-gradient) !important;
+    color: white !important;
+    border-color: rgba(34, 197, 94, 0.3) !important;
+}
+
+.btn-icon.eco-active:hover {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+}
+
+/* Упрощенные анимации для экономичного режима */
+@keyframes fruit-drop-simple {
+    0% {
+        transform: translateY(-100px);
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
+@keyframes message-enter-simple {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes modal-slide-up-simple {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes status-slide-down-simple {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* Индикатор экономичного режима */
+.eco-mode-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--eco-gradient);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    display: none;
+    align-items: center;
+    gap: 8px;
+    animation: slide-in-right 0.3s ease-out;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+body.eco-mode .eco-mode-indicator {
+    display: flex;
+}
+
+.eco-mode-indicator i {
+    font-size: 14px;
 }
