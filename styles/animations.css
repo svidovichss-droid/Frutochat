@@ -233,11 +233,11 @@
 @keyframes modal-slide-up {
     from {
         opacity: 0;
-        transform: translate(-50%, -40%) scale(0.95);
+        transform: translateY(40px) scale(0.95);
     }
     to {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+        transform: translateY(0) scale(1);
     }
 }
 
@@ -825,6 +825,9 @@
 /* Анимация для модального окна фактов */
 #factsModal {
     transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
 }
 
 #factsModal.active {
@@ -834,6 +837,8 @@
 
 #factsModal.active .modal-content {
     animation: modal-slide-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    position: relative;
+    margin: auto;
 }
 
 /* Анимация для текста факта при загрузке */
@@ -924,119 +929,6 @@
 /* Адаптивные стили для модального окна фактов */
 @media (max-width: 768px) {
     #factsModal .modal-content {
-        width: 95%;
-        max-width: 95%;
-        margin: 10px;
-    }
-    
-    #factsModal .fact-content {
-        padding: var(--spacing-lg);
-        min-height: 120px;
-    }
-    
-    #factsModal .fact-content p {
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    #factsModal .modal-content {
-        width: 98%;
-        max-width: 98%;
-        border-radius: var(--radius-2xl);
-    }
-    
-    #factsModal .modal-header,
-    #factsModal .modal-body,
-    #factsModal .modal-actions {
-        padding: var(--spacing-lg);
-    }
-    
-    #factsModal .fact-content {
-        padding: var(--spacing-md);
-        min-height: 100px;
-    }
-    
-    #factsModal .fact-content p {
-        font-size: 0.9375rem;
-    }
-    
-    #factsModal .modal-actions {
-        flex-direction: column;
-        gap: var(--spacing-sm);
-    }
-    
-    #factsModal .modal-actions .btn-primary,
-    #factsModal .modal-actions .btn-secondary {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-/* Анимация для появления фактов с задержкой */
-@keyframes stagger-appear {
-    0% {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-#factsModal .modal-header {
-    animation: stagger-appear 0.3s ease-out 0.1s both;
-}
-
-#factsModal .fact-category {
-    animation: stagger-appear 0.3s ease-out 0.2s both;
-}
-
-#factsModal .fact-content {
-    animation: stagger-appear 0.3s ease-out 0.3s both;
-}
-
-#factsModal .modal-actions {
-    animation: stagger-appear 0.3s ease-out 0.4s both;
-}
-
-/* Добавить в animations.css в конце файла: */
-
-/* Исправляем анимацию для модального окна фактов */
-#factsModal {
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-}
-
-#factsModal.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-#factsModal.active .modal-content {
-    animation: modal-slide-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    position: relative;
-    margin: auto;
-}
-
-/* Исправляем keyframes для центрирования */
-@keyframes modal-slide-up {
-    from {
-        opacity: 0;
-        transform: translateY(40px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-/* Улучшаем адаптивные стили */
-@media (max-width: 768px) {
-    #factsModal .modal-content {
         width: 95% !important;
         max-width: 95% !important;
         margin: 10px !important;
@@ -1098,4 +990,110 @@
         min-height: 80px;
         padding: var(--spacing-md);
     }
+}
+
+/* Анимация для появления фактов с задержкой */
+@keyframes stagger-appear {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#factsModal .modal-header {
+    animation: stagger-appear 0.3s ease-out 0.1s both;
+}
+
+#factsModal .fact-category {
+    animation: stagger-appear 0.3s ease-out 0.2s both;
+}
+
+#factsModal .fact-content {
+    animation: stagger-appear 0.3s ease-out 0.3s both;
+}
+
+#factsModal .modal-actions {
+    animation: stagger-appear 0.3s ease-out 0.4s both;
+}
+
+/* Упрощенные анимации для экономичного режима */
+@keyframes fruit-drop-simple {
+    0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateY(100vh) rotate(180deg);
+        opacity: 0;
+    }
+}
+
+@keyframes message-enter-simple {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes modal-slide-up-simple {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes status-slide-down-simple {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* Для экономичного режима отключаем сложные анимации */
+body.eco-mode *,
+body.eco-mode *::before,
+body.eco-mode *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+}
+
+body.eco-mode .fruit-drop,
+body.eco-mode .message-enter,
+body.eco-mode .modal-slide-up,
+body.eco-mode .status-slide-down {
+    animation: none !important;
+}
+
+/* Упрощенные версии анимаций для экономичного режима */
+body.eco-mode .fruit {
+    animation: fruit-drop-simple 1.5s linear forwards !important;
+}
+
+body.eco-mode .message {
+    animation: message-enter-simple 0.3s ease-out forwards !important;
+}
+
+body.eco-mode .modal.active .modal-content {
+    animation: modal-slide-up-simple 0.3s ease-out !important;
+}
+
+body.eco-mode .status-message.show {
+    animation: status-slide-down-simple 0.3s ease-out !important;
 }
