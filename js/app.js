@@ -12,6 +12,8 @@ function fruitChatApp() {
         fruitRainInterval: null,
         firstVisit: true,
         userFruitIcon: '🍓',
+        ecoMode: false,
+        originalAnimations: null,
         
         // 100 интересных фактов (обновленный список)
         interestingFacts: [
@@ -148,6 +150,16 @@ function fruitChatApp() {
             this.updateCharCount();
             this.generateUserFruitIcon();
             
+            // Загружаем настройку экономичного режима
+            const savedEcoMode = localStorage.getItem('fruitChatEcoMode');
+            if (savedEcoMode !== null) {
+                this.ecoMode = JSON.parse(savedEcoMode);
+                this.applyEcoMode();
+            }
+            
+            // Проверяем устройство на низкую производительность
+            this.detectLowPerformance();
+            
             // Check if first visit
             const hasVisited = localStorage.getItem('hasVisited');
             if (!hasVisited) {
@@ -161,6 +173,223 @@ function fruitChatApp() {
             }, 500);
             
             console.log('🍓 Фруктик Чат инициализирован');
+        },
+        
+        // Метод для определения низкой производительности
+        detectLowPerformance() {
+            // Проверяем наличие прерывистой анимации
+            const isLowPerformance = 
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+                (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) ||
+                (navigator.deviceMemory && navigator.deviceMemory < 4);
+            
+            if (isLowPerformance && !this.ecoMode) {
+                this.ecoMode = true;
+                localStorage.setItem('fruitChatEcoMode', JSON.stringify(this.ecoMode));
+                this.applyEcoMode();
+                this.showStatus('Автоматически включен экономичный режим для улучшения производительности', 'info');
+            }
+        },
+        
+        // Метод переключения экономичного режима
+        toggleEcoMode() {
+            this.ecoMode = !this.ecoMode;
+            localStorage.setItem('fruitChatEcoMode', JSON.stringify(this.ecoMode));
+            this.applyEcoMode();
+            
+            if (this.ecoMode) {
+                this.showStatus('Экономичный режим включен. Нагрузка на GPU уменьшена.', 'success');
+                // Запускаем облегченный дождь
+                this.startEcoFruitRain();
+            } else {
+                this.showStatus('Экономичный режим выключен. Все эффекты восстановлены.', 'success');
+                // Запускаем обычный дождь
+                this.startFruitRain();
+            }
+        },
+        
+        // Метод применения экономичного режима
+        applyEcoMode() {
+            const body = document.body;
+            
+            if (this.ecoMode) {
+                body.classList.add('eco-mode');
+                
+                // Останавливаем обычный дождь
+                if (this.fruitRainInterval) {
+                    clearInterval(this.fruitRainInterval);
+                }
+                
+                // Патчим анимации для экономичного режима
+                this.patchAnimationsForEcoMode();
+            } else {
+                body.classList.remove('eco-mode');
+                
+                // Восстанавливаем обычные анимации
+                this.restoreOriginalAnimations();
+            }
+        },
+        
+        // Патчим анимации для экономичного режима
+        patchAnimationsForEcoMode() {
+            // Сохраняем оригинальные функции
+            if (!window._originalAnimations) {
+                window._originalAnimations = {
+                    fruitShower: window.appAnimations?.fruitShower,
+                    startContinuousFruitRain: window.appAnimations?.startContinuousFruitRain,
+                    celebrateWithFruits: window.appAnimations?.celebrateWithFruits,
+                    fruitShower: window.animateFruitRain || (() => {})
+                };
+            }
+            
+            // Облегченная версия фруктового дождя
+            if (window.appAnimations) {
+                window.appAnimations.fruitShower = function(count = 30) {
+                    const fruitRain = document.getElementById('fruitRain');
+                    if (!fruitRain || document.body.classList.contains('eco-mode')) return;
+                    
+                    // Уменьшаем количество фруктов в 3 раза
+                    const ecoCount = Math.max(5, Math.floor(count / 3));
+                    
+                    for (let i = 0; i < ecoCount; i++) {
+                        setTimeout(() => {
+                            const fruit = document.createElement('div');
+                            fruit.className = 'fruit eco-fruit';
+                            fruit.textContent = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
+                            fruit.style.position = 'fixed';
+                            fruit.style.top = '-100px';
+                            fruit.style.left = Math.random() * window.innerWidth + 'px';
+                            fruit.style.fontSize = '20px'; // Фиксированный размер
+                            fruit.style.zIndex = '1';
+                            fruit.style.pointerEvents = 'none';
+                            fruit.style.opacity = '0.5'; // Полупрозрачные
+                            fruit.style.animation = 'fruit-drop-simple 1s linear forwards';
+                            
+                            fruitRain.appendChild(fruit);
+                            
+                            setTimeout(() => {
+                                if (fruit.parentNode === fruitRain) {
+                                    fruit.remove();
+                                }
+                            }, 1000);
+                        }, i * 100); // Увеличиваем задержку
+                    }
+                };
+                
+                // Облегченный непрерывный дождь
+                window.appAnimations.startContinuousFruitRain = function() {
+                    if (document.body.classList.contains('eco-mode')) {
+                        return null; // Отключаем в экономичном режиме
+                    }
+                    return window._originalAnimations.startContinuousFruitRain ? 
+                        window._originalAnimations.startContinuousFruitRain() : null;
+                };
+                
+                // Облегченная праздничная анимация
+                window.appAnimations.celebrateWithFruits = function() {
+                    if (document.body.classList.contains('eco-mode')) {
+                        // Только один легкий дождь
+                        window.appAnimations.fruitShower(10);
+                    } else {
+                        window._originalAnimations.celebrateWithFruits ? 
+                            window._originalAnimations.celebrateWithFruits() : null;
+                    }
+                };
+            }
+            
+            // Также патчим глобальные функции
+            if (window.animateFruitRain) {
+                window._originalAnimateFruitRain = window.animateFruitRain;
+                window.animateFruitRain = function(count = 20) {
+                    if (document.body.classList.contains('eco-mode')) {
+                        const ecoCount = Math.max(5, Math.floor(count / 3));
+                        const fruitRain = document.getElementById('fruitRain');
+                        if (!fruitRain) return;
+                        
+                        for (let i = 0; i < ecoCount; i++) {
+                            setTimeout(() => {
+                                const fruit = document.createElement('div');
+                                fruit.className = 'fruit eco-fruit';
+                                fruit.textContent = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
+                                fruit.style.left = Math.random() * 100 + 'vw';
+                                fruit.style.fontSize = '20px';
+                                fruit.style.opacity = '0.3';
+                                fruit.style.zIndex = '1';
+                                fruit.style.animation = 'fruit-drop-simple ' + (Math.random() * 0.5 + 0.5) + 's linear forwards';
+                                
+                                fruitRain.appendChild(fruit);
+                                
+                                setTimeout(() => {
+                                    if (fruit.parentNode === fruitRain) {
+                                        fruit.remove();
+                                    }
+                                }, 800);
+                            }, i * 100);
+                        }
+                    } else {
+                        window._originalAnimateFruitRain(count);
+                    }
+                };
+            }
+        },
+        
+        // Восстанавливаем оригинальные анимации
+        restoreOriginalAnimations() {
+            if (window._originalAnimations) {
+                if (window.appAnimations) {
+                    window.appAnimations.fruitShower = window._originalAnimations.fruitShower;
+                    window.appAnimations.startContinuousFruitRain = window._originalAnimations.startContinuousFruitRain;
+                    window.appAnimations.celebrateWithFruits = window._originalAnimations.celebrateWithFruits;
+                }
+            }
+            
+            if (window._originalAnimateFruitRain) {
+                window.animateFruitRain = window._originalAnimateFruitRain;
+            }
+        },
+        
+        // Облегченный фруктовый дождь
+        startEcoFruitRain() {
+            // Очищаем существующий интервал
+            if (this.fruitRainInterval) {
+                clearInterval(this.fruitRainInterval);
+            }
+            
+            // Создаем облегченный дождь
+            const createEcoFruit = () => {
+                if (document.hidden || !this.ecoMode) return;
+                
+                const fruitRain = document.getElementById('fruitRain');
+                if (!fruitRain) return;
+                
+                const fruit = document.createElement('div');
+                fruit.className = 'fruit eco-fruit';
+                fruit.textContent = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
+                fruit.style.position = 'fixed';
+                fruit.style.top = '-100px';
+                fruit.style.left = Math.random() * 100 + 'vw';
+                fruit.style.fontSize = '20px';
+                fruit.style.zIndex = '1';
+                fruit.style.opacity = '0.3';
+                fruit.style.pointerEvents = 'none';
+                fruit.style.animation = 'fruit-drop-simple 1.5s linear forwards';
+                
+                fruitRain.appendChild(fruit);
+                
+                setTimeout(() => {
+                    if (fruit.parentNode === fruitRain) {
+                        fruit.remove();
+                    }
+                }, 1500);
+            };
+            
+            // Медленный дождь - 1 фрукт в секунду
+            this.fruitRainInterval = setInterval(createEcoFruit, 1000);
+            
+            // Создаем несколько начальных фруктов
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => createEcoFruit(), i * 200);
+            }
         },
         
         generateUserFruitIcon() {
@@ -348,7 +577,11 @@ function fruitChatApp() {
                 
                 // Фруктовый дождь вместо конфетти
                 if (window.appAnimations && window.appAnimations.fruitShower) {
-                    window.appAnimations.fruitShower(20);
+                    if (this.ecoMode) {
+                        window.appAnimations.fruitShower(10); // Меньше фруктов
+                    } else {
+                        window.appAnimations.fruitShower(20);
+                    }
                 }
                 
             } catch (error) {
@@ -603,96 +836,161 @@ function fruitChatApp() {
             }, 300);
         },
         
+        // Функция для старта фруктового дождя
+        startFruitRain() {
+            // Останавливаем существующий интервал
+            if (this.fruitRainInterval) {
+                clearInterval(this.fruitRainInterval);
+            }
+            
+            if (this.ecoMode) {
+                this.startEcoFruitRain();
+                return;
+            }
+            
+            // Используем анимации из animations.js
+            if (window.appAnimations && window.appAnimations.startContinuousFruitRain) {
+                this.fruitRainInterval = window.appAnimations.startContinuousFruitRain();
+            } else {
+                // Fallback если animations.js не загружен
+                const createFruit = () => {
+                    if (document.hidden) return;
+                    
+                    const fruitRain = document.getElementById('fruitRain');
+                    if (!fruitRain) return;
+                    
+                    const fruit = document.createElement('div');
+                    fruit.className = 'fruit';
+                    fruit.textContent = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
+                    fruit.style.left = Math.random() * 100 + 'vw';
+                    fruit.style.fontSize = (Math.random() * 24 + 24) + 'px';
+                    fruit.style.opacity = Math.random() * 0.3 + 0.4;
+                    fruit.style.zIndex = '1';
+                    fruit.style.animation = 'fruit-drop ' + (Math.random() * 1.5 + 1) + 's linear forwards';
+                    
+                    fruitRain.appendChild(fruit);
+                    
+                    // Удаляем элемент после анимации
+                    setTimeout(() => {
+                        if (fruit.parentNode === fruitRain) {
+                            fruit.remove();
+                        }
+                    }, (Math.random() * 1500 + 1000));
+                };
+                
+                // Initial fruits
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => createFruit(), Math.random() * 2000);
+                }
+                
+                // Continuous rain с увеличенной частотой
+                this.fruitRainInterval = setInterval(createFruit, 400);
+            }
+        },
+        
+        stopFruitRain() {
+            if (this.fruitRainInterval) {
+                clearInterval(this.fruitRainInterval);
+                this.fruitRainInterval = null;
+            }
+        },
+        
         // Новые функции для работы с фактами
         showRandomFact(category = null) {
             const modal = document.getElementById('factsModal');
             modal.style.display = 'flex';
             
-            // Используем setTimeout для гарантии отображения перед анимацией
-            setTimeout(() => {
-                modal.classList.add('active');
-                
-                let filteredFacts = this.interestingFacts;
-                if (category) {
-                    filteredFacts = this.interestingFacts.filter(fact => fact.category === category);
-                }
-                
-                if (filteredFacts.length === 0) {
-                    filteredFacts = this.interestingFacts;
-                }
-                
-                const randomIndex = Math.floor(Math.random() * filteredFacts.length);
-                const fact = filteredFacts[randomIndex];
-                
-                // Обновляем иконку фрукта
-                const fruitIconElement = document.getElementById('factFruitIcon');
-                if (fruitIconElement && window.getFactIconByCategory) {
-                    fruitIconElement.textContent = window.getFactIconByCategory(fact.category);
-                } else if (fruitIconElement && window.getRandomFruitIcon) {
-                    fruitIconElement.textContent = window.getRandomFruitIcon();
-                }
-                
-                // Обновляем категорию факта
-                const factCategoryElement = document.getElementById('factCategory');
-                if (factCategoryElement) {
-                    const categoryNames = {
-                        'science': '🔬 Наука',
-                        'nature': '🌿 Природа',
-                        'space': '🚀 Космос',
-                        'history': '🏛️ История',
-                        'tech': '💻 Технологии'
-                    };
-                    factCategoryElement.innerHTML = `<span class="category-badge category-${fact.category}">${categoryNames[fact.category] || '📚 Факт'}</span>`;
-                }
-                
-                // Обновляем текст факта
-                const factTextElement = document.getElementById('factText');
-                if (factTextElement) {
-                    factTextElement.textContent = fact.text;
-                    factTextElement.classList.add('fact-text-entrance');
+            // Используем requestAnimationFrame для гарантии отображения перед анимацией
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    modal.classList.add('active');
                     
-                    // Анимация появления
-                    if (window.appAnimations && window.appAnimations.animateFactText) {
-                        window.appAnimations.animateFactText(factTextElement);
+                    let filteredFacts = this.interestingFacts;
+                    if (category) {
+                        filteredFacts = this.interestingFacts.filter(fact => fact.category === category);
                     }
-                }
-                
-                // Обновляем номер факта
-                const factNumberElement = document.getElementById('factNumber');
-                if (factNumberElement) {
-                    const factIndex = this.interestingFacts.findIndex(f => f.text === fact.text) + 1;
-                    factNumberElement.textContent = factIndex;
                     
-                    // Анимация счетчика
-                    if (window.appAnimations && window.appAnimations.animateFactCounter) {
-                        window.appAnimations.animateFactCounter(factNumberElement);
+                    if (filteredFacts.length === 0) {
+                        filteredFacts = this.interestingFacts;
                     }
-                }
-                
-                // Анимация категории
-                if (factCategoryElement && window.appAnimations && window.appAnimations.animateFactCategory) {
-                    window.appAnimations.animateFactCategory(factCategoryElement);
-                }
-                
-                // Анимация иконки
-                if (fruitIconElement && window.appAnimations && window.appAnimations.animateFactIcon) {
-                    window.appAnimations.animateFactIcon(fruitIconElement);
-                }
-                
-                // Запускаем фруктовый дождь
-                if (window.appAnimations && window.appAnimations.fruitShower) {
-                    window.appAnimations.fruitShower(10);
-                }
-                
-                // Фокус на кнопке закрытия для доступности
-                setTimeout(() => {
-                    const closeBtn = modal.querySelector('.btn-icon');
-                    if (closeBtn) {
-                        closeBtn.focus();
+                    
+                    const randomIndex = Math.floor(Math.random() * filteredFacts.length);
+                    const fact = filteredFacts[randomIndex];
+                    
+                    // Обновляем иконку фрукта
+                    const fruitIconElement = document.getElementById('factFruitIcon');
+                    if (fruitIconElement && window.getFactIconByCategory) {
+                        fruitIconElement.textContent = window.getFactIconByCategory(fact.category);
+                    } else if (fruitIconElement && window.getRandomFruitIcon) {
+                        fruitIconElement.textContent = window.getRandomFruitIcon();
                     }
-                }, 100);
-                
-            }, 10);
+                    
+                    // Обновляем категорию факта
+                    const factCategoryElement = document.getElementById('factCategory');
+                    if (factCategoryElement) {
+                        const categoryNames = {
+                            'science': '🔬 Наука',
+                            'nature': '🌿 Природа',
+                            'space': '🚀 Космос',
+                            'history': '🏛️ История',
+                            'tech': '💻 Технологии'
+                        };
+                        factCategoryElement.innerHTML = `<span class="category-badge category-${fact.category}">${categoryNames[fact.category] || '📚 Факт'}</span>`;
+                    }
+                    
+                    // Обновляем текст факта
+                    const factTextElement = document.getElementById('factText');
+                    if (factTextElement) {
+                        factTextElement.textContent = fact.text;
+                        factTextElement.classList.add('fact-text-entrance');
+                        
+                        // Анимация появления
+                        if (window.appAnimations && window.appAnimations.animateFactText) {
+                            window.appAnimations.animateFactText(factTextElement);
+                        }
+                    }
+                    
+                    // Обновляем номер факта
+                    const factNumberElement = document.getElementById('factNumber');
+                    if (factNumberElement) {
+                        const factIndex = this.interestingFacts.findIndex(f => f.text === fact.text) + 1;
+                        factNumberElement.textContent = factIndex;
+                        
+                        // Анимация счетчика
+                        if (window.appAnimations && window.appAnimations.animateFactCounter) {
+                            window.appAnimations.animateFactCounter(factNumberElement);
+                        }
+                    }
+                    
+                    // Анимация категории
+                    if (factCategoryElement && window.appAnimations && window.appAnimations.animateFactCategory) {
+                        window.appAnimations.animateFactCategory(factCategoryElement);
+                    }
+                    
+                    // Анимация иконки
+                    if (fruitIconElement && window.appAnimations && window.appAnimations.animateFactIcon) {
+                        window.appAnimations.animateFactIcon(fruitIconElement);
+                    }
+                    
+                    // Запускаем фруктовый дождь
+                    if (window.appAnimations && window.appAnimations.fruitShower) {
+                        if (this.ecoMode) {
+                            window.appAnimations.fruitShower(5); // Меньше фруктов
+                        } else {
+                            window.appAnimations.fruitShower(10);
+                        }
+                    }
+                    
+                    // Фокус на кнопке закрытия для доступности
+                    setTimeout(() => {
+                        const closeBtn = modal.querySelector('.btn-icon');
+                        if (closeBtn) {
+                            closeBtn.focus();
+                        }
+                    }, 100);
+                    
+                });
+            });
         },
         
         closeFactsModal() {
@@ -767,53 +1065,6 @@ function fruitChatApp() {
             setTimeout(() => {
                 statusEl.classList.remove('show');
             }, 3000);
-        },
-        
-        startFruitRain() {
-            // Используем анимации из animations.js
-            if (window.appAnimations && window.appAnimations.startContinuousFruitRain) {
-                this.fruitRainInterval = window.appAnimations.startContinuousFruitRain();
-            } else {
-                // Fallback если animations.js не загружен
-                const createFruit = () => {
-                    if (document.hidden) return;
-                    
-                    const fruitRain = document.getElementById('fruitRain');
-                    if (!fruitRain) return;
-                    
-                    const fruit = document.createElement('div');
-                    fruit.className = 'fruit';
-                    fruit.textContent = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
-                    fruit.style.left = Math.random() * 100 + 'vw';
-                    fruit.style.fontSize = (Math.random() * 24 + 24) + 'px';
-                    fruit.style.opacity = Math.random() * 0.3 + 0.4;
-                    fruit.style.zIndex = '1';
-                    fruit.style.animation = 'fruit-drop ' + (Math.random() * 1.5 + 1) + 's linear forwards';
-                    
-                    fruitRain.appendChild(fruit);
-                    
-                    // Удаляем элемент после анимации
-                    setTimeout(() => {
-                        if (fruit.parentNode === fruitRain) {
-                            fruit.remove();
-                        }
-                    }, (Math.random() * 1500 + 1000));
-                };
-                
-                // Initial fruits
-                for (let i = 0; i < 15; i++) {
-                    setTimeout(() => createFruit(), Math.random() * 2000);
-                }
-                
-                // Continuous rain с увеличенной частотой
-                this.fruitRainInterval = setInterval(createFruit, 400);
-            }
-        },
-        
-        stopFruitRain() {
-            if (this.fruitRainInterval) {
-                clearInterval(this.fruitRainInterval);
-            }
         },
         
         getChatPreview(chat) {
