@@ -140,10 +140,17 @@
                 </div>
             </div>
             
-            <button @click="createNewChat()" class="btn-primary">
-                <i class="fas fa-plus"></i>
-                <span class="hidden md:inline">Новый чат</span>
-            </button>
+            <div class="flex items-center gap-2">
+                <button @click="toggleEcoMode()" class="btn-icon" :class="{'eco-active': ecoMode}" 
+                        :title="ecoMode ? 'Выключить экономичный режим' : 'Включить экономичный режим'">
+                    <i :class="ecoMode ? 'fas fa-bolt text-yellow-500' : 'fas fa-leaf'"></i>
+                </button>
+                
+                <button @click="createNewChat()" class="btn-primary">
+                    <i class="fas fa-plus"></i>
+                    <span class="hidden md:inline">Новый чат</span>
+                </button>
+            </div>
         </header>
         
         <!-- Messages -->
@@ -248,7 +255,7 @@
     </div>
     
     <!-- Welcome Modal -->
-    <div class="modal" id="welcomeModal" style="display: none;">
+    <div class="modal" id="welcomeModal">
         <div class="modal-overlay" @click="closeWelcomeModal()"></div>
         <div class="modal-content glass" style="max-width: 500px;">
             <div class="modal-header">
@@ -305,6 +312,14 @@
                             <p class="text-gray-600 text-sm">Новые знания каждый день</p>
                         </div>
                     </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <div>
+                            <h5 class="font-semibold text-gray-800">Экономичный режим</h5>
+                            <p class="text-gray-600 text-sm">Уменьшает нагрузку на слабых устройствах</p>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
@@ -324,7 +339,7 @@
     </div>
 
     <!-- Facts Modal -->
-    <div class="modal" id="factsModal" style="display: none;">
+    <div class="modal" id="factsModal">
         <div class="modal-overlay" @click="closeFactsModal()"></div>
         <div class="modal-content glass" style="max-width: 600px;">
             <div class="modal-header">
@@ -380,7 +395,7 @@
     </div>
 
     <!-- Clear All Chats Confirmation Modal -->
-    <div class="modal" id="clearConfirmModal" style="display: none;">
+    <div class="modal" id="clearConfirmModal">
         <div class="modal-overlay" @click="closeClearConfirmModal()"></div>
         <div class="modal-content glass">
             <div class="modal-header">
@@ -415,6 +430,12 @@
 
     <!-- Status Message -->
     <div class="status-message" id="statusMessage"></div>
+    
+    <!-- Eco Mode Indicator -->
+    <div class="eco-mode-indicator" id="ecoModeIndicator">
+        <i class="fas fa-leaf"></i>
+        <span>Экономичный режим</span>
+    </div>
 
     <!-- JavaScript -->
     <script src="js/fruit-icons.js"></script>
