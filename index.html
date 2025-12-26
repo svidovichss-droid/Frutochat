@@ -172,10 +172,10 @@
                         <i class="fas fa-calculator"></i>
                         <span>Помощь с математикой</span>
                     </button>
-                    <button @click="setQuickQuestion('Объясни тему про фотосинтез')" 
+                    <button @click="setRandomTopic()" 
                             class="quick-action-btn">
-                        <i class="fas fa-leaf"></i>
-                        <span>Объяснить тему</span>
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Объяснить случайную тему</span>
                     </button>
                     <button @click="setQuickQuestion('Проверь моё сочинение на ошибки')" 
                             class="quick-action-btn">
@@ -237,9 +237,9 @@
                         <i class="fas fa-lightbulb"></i>
                         <span>Решить задачу</span>
                     </button>
-                    <button @click="setQuickQuestion('Объясни правило русского языка')" class="quick-action-btn">
-                        <i class="fas fa-language"></i>
-                        <span>Русский язык</span>
+                    <button @click="setRandomTopic()" class="quick-action-btn">
+                        <i class="fas fa-book-open"></i>
+                        <span>Объяснить тему</span>
                     </button>
                     <button @click="setQuickQuestion('Подготовь меня к контрольной')" class="quick-action-btn">
                         <i class="fas fa-graduation-cap"></i>
@@ -320,6 +320,14 @@
                             <p class="text-gray-600 text-sm">Уменьшает нагрузку на слабых устройствах</p>
                         </div>
                     </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">🎯</div>
+                        <div>
+                            <h5 class="font-semibold text-gray-800">100 тем для объяснения</h5>
+                            <p class="text-gray-600 text-sm">Математика, русский язык, физика, химия, биология, история, география</p>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
@@ -327,6 +335,16 @@
                         <i class="fas fa-check-circle text-blue-600 mr-2"></i>
                         <strong>Всё готово к работе!</strong> Используется тестовый API ключ
                     </p>
+                    <div class="flex gap-2 mt-3">
+                        <button @click="setRandomTopic()" class="quick-action-btn flex-1">
+                            <i class="fas fa-book-open"></i>
+                            <span>Случайная тема</span>
+                        </button>
+                        <button @click="showRandomFact()" class="quick-action-btn flex-1">
+                            <i class="fas fa-star"></i>
+                            <span>Случайный факт</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="modal-actions">
@@ -363,20 +381,20 @@
                         </span>
                     </div>
                 </div>
-                <div class="fact-tags mt-4 flex flex-wrap gap-2 justify-center" style="display: none;">
-                    <button @click="showRandomFact('science')" class="category-tag" title="Научные факты">
+                <div class="fact-tags mt-4 flex flex-wrap gap-2 justify-center">
+                    <button @click="showRandomFact('science')" class="category-tag category-science" title="Научные факты">
                         <i class="fas fa-flask"></i> Наука
                     </button>
-                    <button @click="showRandomFact('nature')" class="category-tag" title="Факты о природе">
+                    <button @click="showRandomFact('nature')" class="category-tag category-nature" title="Факты о природе">
                         <i class="fas fa-leaf"></i> Природа
                     </button>
-                    <button @click="showRandomFact('space')" class="category-tag" title="Космические факты">
+                    <button @click="showRandomFact('space')" class="category-tag category-space" title="Космические факты">
                         <i class="fas fa-rocket"></i> Космос
                     </button>
-                    <button @click="showRandomFact('history')" class="category-tag" title="Исторические факты">
+                    <button @click="showRandomFact('history')" class="category-tag category-history" title="Исторические факты">
                         <i class="fas fa-landmark"></i> История
                     </button>
-                    <button @click="showRandomFact('tech')" class="category-tag" title="Технологические факты">
+                    <button @click="showRandomFact('tech')" class="category-tag category-tech" title="Технологические факты">
                         <i class="fas fa-laptop-code"></i> Технологии
                     </button>
                 </div>
