@@ -2811,3 +2811,55 @@ body.eco-mode .eco-mode-indicator {
 .eco-mode-indicator i {
     font-size: 14px;
 }
+
+/* Стиль для кнопки объяснения случайной темы */
+.btn-topic {
+    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-xl);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-bounce);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-topic::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.5s ease;
+}
+
+.btn-topic:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
+}
+
+.btn-topic:hover::before {
+    left: 100%;
+}
+
+.btn-topic:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Специальный стиль для кнопки темы в модальном окне */
+.feature-item:last-child .feature-icon {
+    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+}
