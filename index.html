@@ -224,7 +224,7 @@
     </footer>
   </div>
 
-  <!-- Welcome Modal (ВАЖНО: display none по умолчанию) -->
+  <!-- Welcome Modal -->
   <div class="modal" id="welcomeModal" style="display:none;">
     <div class="modal-overlay" @click="closeWelcomeModal()"></div>
     <div class="modal-content glass" style="max-width: 500px;">
@@ -235,7 +235,6 @@
         </button>
       </div>
       <div class="modal-body">
-        <!-- ... содержимое как у тебя ... -->
         <div class="text-center mb-6">
           <div class="fruit-icons-grid mb-4">
             <div class="fruit-icon">🍎</div>
@@ -250,6 +249,29 @@
             Фруктик поможет с уроками, объяснит сложные темы и сделает обучение интересным!
           </p>
         </div>
+        <div class="features-list">
+          <div class="feature-item mb-3">
+            <div class="feature-icon">📚</div>
+            <div>
+              <h5 class="font-bold text-gray-800">Помощь с уроками</h5>
+              <p class="text-sm text-gray-600">Объясняет математику, русский язык и другие предметы</p>
+            </div>
+          </div>
+          <div class="feature-item mb-3">
+            <div class="feature-icon">✨</div>
+            <div>
+              <h5 class="font-bold text-gray-800">Интересные факты</h5>
+              <p class="text-sm text-gray-600">Более 120 фактов о науке, природе, космосе и технологиях</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🎮</div>
+            <div>
+              <h5 class="font-bold text-gray-800">Игровой подход</h5>
+              <p class="text-sm text-gray-600">Анимации, фруктовый дождь и весёлое общение</p>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="modal-actions">
         <button @click="closeWelcomeModal()" class="btn-primary w-full">
@@ -259,7 +281,7 @@
     </div>
   </div>
 
-  <!-- Facts Modal (ВАЖНО: display none по умолчанию) -->
+  <!-- Facts Modal -->
   <div class="modal" id="factsModal" style="display:none;">
     <div class="modal-overlay" @click="closeFactsModal()"></div>
     <div class="modal-content glass" style="max-width: 600px;">
@@ -279,8 +301,19 @@
           <p id="factText" class="fact-text-entrance">Загрузка факта...</p>
           <div class="fact-number-display">
             <span class="text-gray-600 text-sm">
-              Факт <span id="factNumber" class="font-bold text-primary-gradient">1</span> из 100
+              Факт <span id="factNumber" class="font-bold text-primary-gradient">1</span> из 140
             </span>
+          </div>
+        </div>
+        
+        <div class="fact-tags mt-6">
+          <h4 class="text-sm font-semibold text-gray-700 mb-2">Выберите категорию:</h4>
+          <div class="flex flex-wrap gap-2">
+            <button @click="showRandomFact('science')" class="category-tag">🔬 Наука</button>
+            <button @click="showRandomFact('nature')" class="category-tag">🌿 Природа</button>
+            <button @click="showRandomFact('space')" class="category-tag">🚀 Космос</button>
+            <button @click="showRandomFact('history')" class="category-tag">🏛️ История</button>
+            <button @click="showRandomFact('tech')" class="category-tag">💻 Технологии</button>
           </div>
         </div>
       </div>
@@ -298,7 +331,7 @@
     </div>
   </div>
 
-  <!-- Clear Confirm Modal (ВАЖНО: display none по умолчанию) -->
+  <!-- Clear Confirm Modal -->
   <div class="modal" id="clearConfirmModal" style="display:none;">
     <div class="modal-overlay" @click="closeClearConfirmModal()"></div>
     <div class="modal-content glass">
