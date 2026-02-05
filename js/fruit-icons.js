@@ -1,103 +1,78 @@
-// Фруктовые иконки для чата
-window.fruitIcons = {
-    // Основные фрукты
-    main: ['🍓', '🍍', '🍇', '🍉', '🍊', '🍋', '🍌', '🍎', '🍑', '🍒'],
-    
-    // Сезонные фрукты
-    seasonal: ['🥭', '🫐', '🍐', '🥝', '🍈', '🥥', '🌰', '🥭'],
-    
-    // Веселые фрукты
-    fun: ['🍏', '🍅', '🍆', '🥑', '🌽', '🥦', '🥬', '🥒'],
-    
-    // Иконки для категорий фактов
-    science: ['🔬', '🧪', '⚗️', '🧫', '🔭', '⚛️', '🧬', '🦠'],
-    nature: ['🌿', '🍃', '🌺', '🌸', '🌼', '🌳', '🐝', '🦋'],
-    space: ['🚀', '🪐', '🌕', '🌌', '⭐', '🌠', '☄️', '🛰️'],
-    history: ['🏛️', '📜', '⚔️', '👑', '🗿', '🏺', '⚱️', '🕰️'],
-    tech: ['💻', '📱', '🔌', '🖥️', '⌨️', '🖱️', '💾', '📡'],
-    
-    // Все фрукты
-    all: function() {
-        return [...this.main, ...this.seasonal, ...this.fun];
-    },
-    
-    // Получить случайный фрукт
-    random: function() {
-        const allFruits = this.all();
-        return allFruits[Math.floor(Math.random() * allFruits.length)];
-    },
-    
-    // Получить иконку по категории факта
-    getByCategory: function(category) {
-        const categoryIcons = {
-            'science': ['🔬', '🧪', '⚗️', '🧫', '🔭', '⚛️', '🧬', '🦠', '🌡️', '🧲'],
-            'nature': ['🌿', '🍃', '🌺', '🌸', '🌼', '🌳', '🐝', '🦋', '🐞', '🌱'],
-            'space': ['🚀', '🪐', '🌕', '🌌', '⭐', '🌠', '☄️', '🛰️', '👨‍🚀', '👩‍🚀'],
-            'history': ['🏛️', '📜', '⚔️', '👑', '🗿', '🏺', '⚱️', '🕰️', '🗺️', '🏰'],
-            'tech': ['💻', '📱', '🔌', '🖥️', '⌨️', '🖱️', '💾', '📡', '🤖', '⚡'],
-            'math': ['📐', '🧮', '🔢', '📏', '➕', '➖', '✖️', '➗', 'π', '∞'],
-            'general': ['🍓', '🍍', '🍇', '🍉', '🍊', '🍋', '🍌', '🍎', '🍑', '🍒']
-        };
-        
-        const icons = categoryIcons[category] || categoryIcons.general;
-        return icons[Math.floor(Math.random() * icons.length)];
+// fruit-icons.js — финальная версия (категории + делегирование дождя)
+(function () {
+  'use strict';
+
+  const FRUITS_MAIN = ['🍓', '🍍', '🍇', '🍉', '🍊', '🍋', '🍌', '🍎', '🍑', '🍒'];
+  const FRUITS_SEASONAL = ['🥭', '🫐', '🍐', '🥝', '🍈', '🥥', '🌰', '🥭'];
+  const FRUITS_FUN = ['🍏', '🍅', '🍆', '🥑', '🌽', '🥦', '🥬', '🥒'];
+
+  const CATEGORY_ICONS = {
+    science: ['🔬', '🧪', '⚗️', '🧫', '🔭', '⚛️', '🧬', '🦠', '🌡️', '🧲'],
+    nature: ['🌿', '🍃', '🌺', '🌸', '🌼', '🌳', '🐝', '🦋', '🐞', '🌱'],
+    space: ['🚀', '🪐', '🌕', '🌌', '⭐', '🌠', '☄️', '🛰️', '👨‍🚀', '👩‍🚀'],
+    history: ['🏛️', '📜', '⚔️', '👑', '🗿', '🏺', '⚱️', '🕰️', '🗺️', '🏰'],
+    tech: ['💻', '📱', '🔌', '🖥️', '⌨️', '🖱️', '💾', '📡', '🤖', '⚡'],
+    math: ['📐', '🧮', '🔢', '📏', '➕', '➖', '✖️', '➗', 'π', '∞'],
+    general: FRUITS_MAIN
+  };
+
+  const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  window.fruitIcons = {
+    main: FRUITS_MAIN,
+    seasonal: FRUITS_SEASONAL,
+    fun: FRUITS_FUN,
+
+    all() { return [...FRUITS_MAIN, ...FRUITS_SEASONAL, ...FRUITS_FUN]; },
+    random() { return rand(this.all()); },
+
+    getByCategory(category) {
+      const icons = CATEGORY_ICONS[category] || CATEGORY_ICONS.general;
+      return rand(icons);
     }
-};
+  };
 
-// Глобальная функция для получения случайной фруктовой иконки
-window.getRandomFruitIcon = function() {
+  window.getRandomFruitIcon = function () {
     return window.fruitIcons.random();
-};
+  };
 
-// Функция для получения иконки по категории факта
-window.getFactIconByCategory = function(category) {
+  window.getFactIconByCategory = function (category) {
     return window.fruitIcons.getByCategory(category);
-};
+  };
 
-// Функция для анимации фруктового дождя
-window.animateFruitRain = function(count = 20) {
+  // Делегируем дождь в движок (если есть), иначе в appAnimations, иначе fallback
+  window.animateFruitRain = function (count = 20) {
+    if (window.FruitRainEngine && typeof window.FruitRainEngine.burst === 'function') {
+      window.FruitRainEngine.burst(count, { eco: document.body.classList.contains('eco-mode') });
+      return;
+    }
+    if (window.appAnimations && typeof window.appAnimations.fruitShower === 'function') {
+      window.appAnimations.fruitShower(count);
+      return;
+    }
+
     const fruitRain = document.getElementById('fruitRain');
     if (!fruitRain) return;
-    
+
+    const frag = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
-        setTimeout(() => {
-            const fruit = document.createElement('div');
-            fruit.className = 'fruit';
-            fruit.textContent = window.getRandomFruitIcon();
-            fruit.style.left = Math.random() * 100 + 'vw';
-            fruit.style.fontSize = (Math.random() * 32 + 24) + 'px';
-            fruit.style.opacity = Math.random() * 0.4 + 0.3;
-            fruit.style.zIndex = '1';
-            fruit.style.animation = 'fruit-drop ' + (Math.random() * 1.5 + 1) + 's linear forwards';
-            
-            fruitRain.appendChild(fruit);
-            
-            // Удаляем элемент после анимации
-            setTimeout(() => {
-                if (fruit.parentNode === fruitRain) {
-                    fruit.remove();
-                }
-            }, (Math.random() * 1500 + 1000));
-        }, i * 50);
+      const fruit = document.createElement('div');
+      fruit.className = 'fruit';
+      fruit.textContent = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
+      fruit.style.left = `${Math.random() * 100}vw`;
+      fruit.style.top = '-100px';
+      fruit.style.position = 'fixed';
+      fruit.style.fontSize = `${Math.floor(Math.random() * 32 + 24)}px`;
+      fruit.style.opacity = String(Math.random() * 0.4 + 0.3);
+      fruit.style.pointerEvents = 'none';
+      fruit.style.animation = `fruit-drop ${(Math.random() * 1.5 + 1).toFixed(2)}s linear ${i * 50}ms forwards`;
+      fruit.addEventListener('animationend', () => fruit.remove(), { once: true });
+      frag.appendChild(fruit);
     }
-};
+    fruitRain.appendChild(frag);
+  };
 
-// Функция для праздничного фруктового эффекта
-window.celebrateWithFruits = function() {
-    // Только фруктовый дождь
+  window.celebrateWithFruits = function () {
     window.animateFruitRain(30);
-};
-
-// Инициализация фруктовых эффектов при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-    // Добавляем фруктовые иконки в заголовок
-    const title = document.querySelector('title');
-    if (title) {
-        setInterval(() => {
-            title.textContent = title.textContent.replace(/^🍓\s*/, '') + ' 🍓';
-            setTimeout(() => {
-                title.textContent = title.textContent.replace(/\s*🍓$/, '');
-            }, 1000);
-        }, 5000);
-    }
-});
+  };
+})();
