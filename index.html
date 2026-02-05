@@ -1,478 +1,364 @@
 <!DOCTYPE html>
 <html lang="ru" class="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Фруктик Чат - умный AI помощник для детей в учёбе">
-    <meta name="keywords" content="AI чат, Mistral, помощник, дети, учёба, русский язык">
-    <title>🍓 Фруктик Чат | AI Помощник</title>
-    
-    <!-- PWA Configuration -->
-    <meta name="application-name" content="Фруктик Чат">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Фруктик Чат">
-    <meta name="theme-color" content="#ff6b6b">
-    <meta name="msapplication-TileColor" content="#ff6b6b">
-    <meta name="color-scheme" content="light only">
-    
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://api.mistral.ai">
-    
-    <!-- Modern Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.452.0/font/lucide.css">
-    
-    <!-- Library Imports -->
-    <script src="https://unpkg.com/alpinejs@3.14.0/dist/cdn.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js"></script>
-    
-    <!-- KaTeX for Math Rendering -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/animations.css">
-    <link rel="stylesheet" href="styles/responsive.css">
-    
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Service Worker -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registered:', registration);
-                    })
-                    .catch(error => {
-                        console.log('ServiceWorker registration failed:', error);
-                    });
-            });
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Фруктик Чат - умный AI помощник для детей в учёбе">
+  <meta name="keywords" content="AI чат, Mistral, помощник, дети, учёба, русский язык">
+  <title>🍓 Фруктик Чат - AI Помощник</title>
+
+  <!-- PWA Configuration -->
+  <meta name="application-name" content="Фруктик Чат">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Фруктик Чат">
+  <meta name="theme-color" content="#ff6b6b">
+  <meta name="msapplication-TileColor" content="#ff6b6b">
+  <meta name="color-scheme" content="light only">
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.mistral.ai">
+
+  <!-- Modern Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.452.0/font/lucide.css">
+
+  <!-- Library Imports -->
+  <script src="https://unpkg.com/alpinejs@3.14.0/dist/cdn.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js"></script>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/animations.css">
+  <link rel="stylesheet" href="styles/responsive.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => console.log('ServiceWorker registered:', registration))
+          .catch(error => console.log('ServiceWorker registration failed:', error));
+      });
+    }
+  </script>
 </head>
+
 <body x-data="fruitChatApp()" x-init="init()">
-    <!-- Fruit Rain Animation -->
-    <div class="fruit-rain" id="fruitRain"></div>
-    
-    <!-- Sidebar -->
-    <div class="sidebar" :class="{ 'active': sidebarOpen }" id="sidebar">
-        <div class="sidebar-content glass">
-            <div class="sidebar-header">
-                <h2 class="sidebar-title">💬 Мои чаты</h2>
-                <button @click="closeSidebar()" class="btn-icon">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-gray-700">Всего чатов: <span x-text="chats.length" class="font-bold text-primary-gradient"></span></span>
-                </div>
-            </div>
-            
-            <div class="chats-list" id="chatsList">
-                <template x-for="chat in sortedChats" :key="chat.id">
-                    <div class="chat-item" 
-                         :class="{ 'active': chat.id === currentChatId }"
-                         @click="loadChat(chat.id)">
-                        <div class="chat-item-header">
-                            <div class="chat-item-title" x-text="chat.title"></div>
-                            <div class="chat-item-time" x-text="formatTime(chat.updatedAt)"></div>
-                        </div>
-                        <div class="chat-item-preview" x-text="getChatPreview(chat)"></div>
-                        <div class="chat-item-actions">
-                            <button @click.stop="deleteChat(chat.id)" class="delete-chat-btn">
-                                <i class="fas fa-trash text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </template>
-                
-                <div x-show="chats.length === 0" class="text-center py-8">
-                    <div class="text-gray-400 mb-2">
-                        <i class="fas fa-comments text-2xl"></i>
-                    </div>
-                    <p class="text-gray-600">Нет сохраненных чатов</p>
-                </div>
-            </div>
-            
-            <button @click="showClearConfirmModal()" class="btn-clear-all w-full mt-4">
-                <i class="fas fa-trash-alt"></i>
-                <span>Очистить все чаты</span>
-            </button>
-        </div>
-    </div>
-    
-    <div class="sidebar-overlay" 
-         :class="{ 'active': sidebarOpen }" 
-         @click="closeSidebar()"></div>
-    
-    <!-- Main Chat Container -->
-    <div class="chat-container glass">
-        <!-- Header -->
-        <header class="header glass">
-            <button @click="openSidebar()" class="btn-icon">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <div class="logo">
-                <div class="logo-icon">
-                    <span>🍓</span>
-                </div>
-                <div class="logo-text">
-                    <h1 class="logo-title">Фруктик Чат</h1>
-                    <p class="logo-subtitle">AI помощник для учёбы</p>
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-2">
-                <button @click="toggleEcoMode()" class="btn-icon" :class="{'eco-active': ecoMode}" 
-                        :title="ecoMode ? 'Выключить экономичный режим' : 'Включить экономичный режим'">
-                    <i :class="ecoMode ? 'fas fa-bolt text-yellow-500' : 'fas fa-leaf'"></i>
-                </button>
-                
-                <button @click="createNewChat()" class="btn-primary">
-                    <i class="fas fa-plus"></i>
-                    <span class="hidden md:inline">Новый чат</span>
-                </button>
-            </div>
-        </header>
-        
-        <!-- Messages -->
-        <main class="messages-container">
-            <div id="messagesList">
-                <!-- Messages will be rendered here -->
-            </div>
-            
-            <div x-show="currentChat?.messages?.length === 0" class="empty-state">
-                <div class="empty-state-icon">🍓</div>
-                <h2 class="empty-state-title">Начните общение с Фруктиком!</h2>
-                <p class="empty-state-description">
-                    Задавайте вопросы, просите помочь с уроками или просто общайтесь. 
-                    Фруктик всегда готов помочь вам в учёбе!
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-md">
-                    <button @click="setQuickQuestion('Помоги с домашним заданием по математике')" 
-                            class="quick-action-btn">
-                        <i class="fas fa-calculator"></i>
-                        <span>Помощь с математикой</span>
-                    </button>
-                    <button @click="setRandomTopic()" 
-                            class="quick-action-btn">
-                        <i class="fas fa-lightbulb"></i>
-                        <span>Объяснить случайную тему</span>
-                    </button>
-                    <button @click="setQuickQuestion('Проверь моё сочинение на ошибки')" 
-                            class="quick-action-btn">
-                        <i class="fas fa-edit"></i>
-                        <span>Проверить сочинение</span>
-                    </button>
-                    <button @click="showRandomFact()" 
-                            class="quick-action-btn">
-                        <i class="fas fa-star"></i>
-                        <span>Интересный факт</span>
-                    </button>
-                </div>
-            </div>
-        </main>
-        
-        <!-- Typing Indicator -->
-        <div id="typingIndicator" style="display: none;">
-            <div style="display: flex; align-items: center; padding: 1rem;">
-                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                    <span>🍍</span>
-                </div>
-                <div style="display: flex; gap: 5px;">
-                    <div style="width: 8px; height: 8px; background: #667eea; border-radius: 50%; animation: bounce 1.4s infinite;"></div>
-                    <div style="width: 8px; height: 8px; background: #667eea; border-radius: 50%; animation: bounce 1.4s infinite 0.2s;"></div>
-                    <div style="width: 8px; height: 8px; background: #667eea; border-radius: 50%; animation: bounce 1.4s infinite 0.4s;"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Input Area -->
-        <footer class="input-container glass">
-            <div class="input-wrapper">
-                <div class="input-group">
-                    <div class="input-field">
-                        <textarea 
-                            x-model="messageInput"
-                            @input="updateCharCount()"
-                            @keydown.enter.prevent="handleEnter($event)"
-                            :disabled="isSending"
-                            placeholder="Напишите сообщение Фруктику..."
-                            class="textarea"
-                            id="messageInput"
-                            rows="1"></textarea>
-                        <div class="char-counter" :class="charCounterClass" id="charCounter">
-                            <span x-text="charCount"></span>/1000
-                        </div>
-                    </div>
-                    <button 
-                        @click="sendMessage()"
-                        :disabled="!messageInput.trim() || isSending"
-                        class="btn-send"
-                        id="sendButton">
-                        <i class="fas" :class="isSending ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
-                    </button>
-                </div>
-                
-                <div class="quick-actions">
-                    <button @click="setQuickQuestion('Помоги решить задачу')" class="quick-action-btn">
-                        <i class="fas fa-lightbulb"></i>
-                        <span>Решить задачу</span>
-                    </button>
-                    <button @click="setRandomTopic()" class="quick-action-btn">
-                        <i class="fas fa-book-open"></i>
-                        <span>Объяснить тему</span>
-                    </button>
-                    <button @click="setQuickQuestion('Подготовь меня к контрольной')" class="quick-action-btn">
-                        <i class="fas fa-graduation-cap"></i>
-                        <span>Подготовка</span>
-                    </button>
-                    <button @click="showRandomFact()" class="quick-action-btn btn-fun-fact">
-                        <i class="fas fa-star"></i>
-                        <span>Случайный факт</span>
-                    </button>
-                </div>
-            </div>
-        </footer>
-    </div>
-    
-    <!-- Welcome Modal -->
-    <div class="modal" id="welcomeModal">
-        <div class="modal-overlay" @click="closeWelcomeModal()"></div>
-        <div class="modal-content glass" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3 class="modal-title">🍓 Добро пожаловать в Фруктик Чат!</h3>
-                <button @click="closeWelcomeModal()" class="btn-icon">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="text-center mb-6">
-                    <div class="fruit-icons-grid mb-4">
-                        <div class="fruit-icon">🍎</div>
-                        <div class="fruit-icon">🍌</div>
-                        <div class="fruit-icon">🍇</div>
-                        <div class="fruit-icon">🍊</div>
-                        <div class="fruit-icon">🍓</div>
-                        <div class="fruit-icon">🍉</div>
-                    </div>
-                    <h4 class="text-xl font-bold text-gray-800 mb-2">Ваш AI помощник для учёбы</h4>
-                    <p class="text-gray-600">
-                        Фруктик поможет с уроками, объяснит сложные темы и сделает обучение интересным!
-                    </p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="feature-item">
-                        <div class="feature-icon">📚</div>
-                        <div>
-                            <h5 class="font-semibold text-gray-800">Помощь с уроками</h5>
-                            <p class="text-gray-600 text-sm">Математика, русский язык, история и другие предметы</p>
-                        </div>
-                    </div>
-                    
-                    <div class="feature-item">
-                        <div class="feature-icon">🔐</div>
-                        <div>
-                            <h5 class="font-semibold text-gray-800">Безопасное общение</h5>
-                            <p class="text-gray-600 text-sm">Все данные хранятся только на вашем устройстве</p>
-                        </div>
-                    </div>
-                    
-                    <div class="feature-item">
-                        <div class="feature-icon">🎨</div>
-                        <div>
-                            <h5 class="font-semibold text-gray-800">Весёлые анимации</h5>
-                            <p class="text-gray-600 text-sm">Фруктовый дождь и праздничные эффекты</p>
-                        </div>
-                    </div>
-                    
-                    <div class="feature-item">
-                        <div class="feature-icon">✨</div>
-                        <div>
-                            <h5 class="font-semibold text-gray-800">100 интересных фактов</h5>
-                            <p class="text-gray-600 text-sm">Новые знания каждый день</p>
-                        </div>
-                    </div>
-                    
-                    <div class="feature-item">
-                        <div class="feature-icon">⚡</div>
-                        <div>
-                            <h5 class="font-semibold text-gray-800">Экономичный режим</h5>
-                            <p class="text-gray-600 text-sm">Уменьшает нагрузку на слабых устройствах</p>
-                        </div>
-                    </div>
-                    
-                    <div class="feature-item">
-                        <div class="feature-icon">🎯</div>
-                        <div>
-                            <h5 class="font-semibold text-gray-800">100 тем для объяснения</h5>
-                            <p class="text-gray-600 text-sm">Математика, русский язык, физика, химия, биология, история, география</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                    <p class="text-sm text-blue-800 mb-2">
-                        <i class="fas fa-check-circle text-blue-600 mr-2"></i>
-                        <strong>Всё готово к работе!</strong> Используется тестовый API ключ
-                    </p>
-                    <div class="flex gap-2 mt-3">
-                        <button @click="setRandomTopic()" class="quick-action-btn flex-1">
-                            <i class="fas fa-book-open"></i>
-                            <span>Случайная тема</span>
-                        </button>
-                        <button @click="showRandomFact()" class="quick-action-btn flex-1">
-                            <i class="fas fa-star"></i>
-                            <span>Случайный факт</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button @click="closeWelcomeModal()" class="btn-primary w-full">
-                    <i class="fas fa-play mr-2"></i>
-                    Начать общение
-                </button>
-            </div>
-        </div>
-    </div>
+  <!-- Fruit Rain Animation -->
+  <div class="fruit-rain" id="fruitRain"></div>
 
-    <!-- Facts Modal -->
-    <div class="modal" id="factsModal">
-        <div class="modal-overlay" @click="closeFactsModal()"></div>
-        <div class="modal-content glass" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <span id="factFruitIcon" style="margin-right: 10px; display: inline-block;">✨</span>
-                    Интересный факт
-                </h3>
-                <button @click="closeFactsModal()" class="btn-icon" aria-label="Закрыть">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="fact-category mb-4" id="factCategory">
-                    <!-- Категория будет здесь -->
-                </div>
-                <div class="fact-content">
-                    <p id="factText" class="fact-text-entrance">Загрузка факта...</p>
-                    <div class="fact-number-display">
-                        <span class="text-gray-600 text-sm">
-                            Факт <span id="factNumber" class="font-bold text-primary-gradient">1</span> из 100
-                        </span>
-                    </div>
-                </div>
-                <div class="fact-tags mt-4 flex flex-wrap gap-2 justify-center">
-                    <button @click="showRandomFact('science')" class="category-tag category-science" title="Научные факты">
-                        <i class="fas fa-flask"></i> Наука
-                    </button>
-                    <button @click="showRandomFact('nature')" class="category-tag category-nature" title="Факты о природе">
-                        <i class="fas fa-leaf"></i> Природа
-                    </button>
-                    <button @click="showRandomFact('space')" class="category-tag category-space" title="Космические факты">
-                        <i class="fas fa-rocket"></i> Космос
-                    </button>
-                    <button @click="showRandomFact('history')" class="category-tag category-history" title="Исторические факты">
-                        <i class="fas fa-landmark"></i> История
-                    </button>
-                    <button @click="showRandomFact('tech')" class="category-tag category-tech" title="Технологические факты">
-                        <i class="fas fa-laptop-code"></i> Технологии
-                    </button>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button @click="shareFact()" class="btn-secondary" title="Поделиться фактом">
-                    <i class="fas fa-share-alt"></i>
-                    <span class="hidden sm:inline">Поделиться</span>
-                </button>
-                <button @click="showRandomFact()" class="btn-primary" title="Случайный факт">
-                    <i class="fas fa-random"></i>
-                    <span class="hidden sm:inline">Другой факт</span>
-                </button>
-            </div>
+  <!-- Sidebar -->
+  <div class="sidebar" :class="{ 'active': sidebarOpen }" id="sidebar">
+    <div class="sidebar-content glass">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">💬 Мои чаты</h2>
+        <button @click="closeSidebar()" class="btn-icon">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-gray-700">Всего чатов: <span x-text="chats.length" class="font-bold text-primary-gradient"></span></span>
         </div>
-    </div>
+      </div>
 
-    <!-- Clear All Chats Confirmation Modal -->
-    <div class="modal" id="clearConfirmModal">
-        <div class="modal-overlay" @click="closeClearConfirmModal()"></div>
-        <div class="modal-content glass">
-            <div class="modal-header">
-                <h3 class="modal-title">⚠️ Подтверждение</h3>
-                <button @click="closeClearConfirmModal()" class="btn-icon">
-                    <i class="fas fa-times"></i>
-                </button>
+      <div class="chats-list" id="chatsList">
+        <template x-for="chat in sortedChats" :key="chat.id">
+          <div class="chat-item"
+               :class="{ 'active': chat.id === currentChatId }"
+               @click="loadChat(chat.id)">
+            <div class="chat-item-header">
+              <div class="chat-item-title" x-text="chat.title"></div>
+              <div class="chat-item-time" x-text="formatTime(chat.updatedAt)"></div>
             </div>
-            <div class="modal-body">
-                <div class="text-center py-6">
-                    <div class="text-5xl mb-4 text-red-500">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <h4 class="text-xl font-bold text-gray-800 mb-2">Удалить все чаты?</h4>
-                    <p class="text-gray-600">
-                        Это действие удалит все ваши чаты и сообщения. 
-                        Это действие нельзя отменить.
-                    </p>
-                </div>
+            <div class="chat-item-preview" x-text="getChatPreview(chat)"></div>
+            <div class="chat-item-actions">
+              <button @click.stop="deleteChat(chat.id)" class="delete-chat-btn">
+                <i class="fas fa-trash text-sm"></i>
+              </button>
             </div>
-            <div class="modal-actions">
-                <button @click="closeClearConfirmModal()" class="btn-secondary">
-                    Отмена
-                </button>
-                <button @click="confirmClearAllChats()" class="btn-clear-all">
-                    <i class="fas fa-trash-alt"></i>
-                    Удалить всё
-                </button>
-            </div>
+          </div>
+        </template>
+
+        <div x-show="chats.length === 0" class="text-center py-8">
+          <div class="text-gray-400 mb-2">
+            <i class="fas fa-comments text-2xl"></i>
+          </div>
+          <p class="text-gray-600">Нет сохраненных чатов</p>
         </div>
-    </div>
+      </div>
 
-    <!-- Status Message -->
-    <div class="status-message" id="statusMessage"></div>
-    
-    <!-- Eco Mode Indicator -->
-    <div class="eco-mode-indicator" id="ecoModeIndicator">
-        <i class="fas fa-leaf"></i>
-        <span>Экономичный режим</span>
+      <button @click="showClearConfirmModal()" class="btn-clear-all w-full mt-4">
+        <i class="fas fa-trash-alt"></i>
+        <span>Очистить все чаты</span>
+      </button>
     </div>
+  </div>
 
-    <!-- JavaScript -->
-    <script src="js/fruit-icons.js"></script>
-    <script src="js/animations.js"></script>
-    <script src="js/app.js"></script>
-    
-    <script>
-        // Инициализация KaTeX
-        document.addEventListener('DOMContentLoaded', function() {
-            renderMathInElement(document.body, {
-                delimiters: [
-                    {left: '$$', right: '$$', display: true},
-                    {left: '$', right: '$', display: false},
-                    {left: '\\(', right: '\\)', display: false},
-                    {left: '\\[', right: '\\]', display: true}
-                ],
-                throwOnError: false
-            });
+  <div class="sidebar-overlay"
+       :class="{ 'active': sidebarOpen }"
+       @click="closeSidebar()"></div>
+
+  <!-- Main Chat Container -->
+  <div class="chat-container glass">
+    <!-- Header -->
+    <header class="header glass">
+      <button @click="openSidebar()" class="btn-icon">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <div class="logo">
+        <div class="logo-icon"><span>🍓</span></div>
+        <div class="logo-text">
+          <h1 class="logo-title">Фруктик Чат</h1>
+          <p class="logo-subtitle">AI помощник для учёбы</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button @click="toggleEcoMode()" class="btn-icon" :class="{'eco-active': ecoMode}"
+                :title="ecoMode ? 'Выключить экономичный режим' : 'Включить экономичный режим'">
+          <i :class="ecoMode ? 'fas fa-bolt text-yellow-500' : 'fas fa-leaf'"></i>
+        </button>
+
+        <button @click="createNewChat()" class="btn-primary">
+          <i class="fas fa-plus"></i>
+          <span class="hidden md:inline">Новый чат</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Messages -->
+    <main class="messages-container">
+      <div id="messagesList"></div>
+
+      <div x-show="currentChat?.messages?.length === 0" class="empty-state">
+        <div class="empty-state-icon">🍓</div>
+        <h2 class="empty-state-title">Начните общение с Фруктиком!</h2>
+        <p class="empty-state-description">
+          Задавайте вопросы, просите помочь с уроками или просто общайтесь.
+          Фруктик всегда готов помочь вам в учёбе!
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-md">
+          <button @click="setQuickQuestion('Помоги с домашним заданием по математике')" class="quick-action-btn">
+            <i class="fas fa-calculator"></i><span>Помощь с математикой</span>
+          </button>
+          <button @click="setRandomTopic()" class="quick-action-btn">
+            <i class="fas fa-lightbulb"></i><span>Объяснить случайную тему</span>
+          </button>
+          <button @click="setQuickQuestion('Проверь моё сочинение на ошибки')" class="quick-action-btn">
+            <i class="fas fa-edit"></i><span>Проверить сочинение</span>
+          </button>
+          <button @click="showRandomFact()" class="quick-action-btn">
+            <i class="fas fa-star"></i><span>Интересный факт</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Input Area -->
+    <footer class="input-container glass">
+      <div class="input-wrapper">
+        <div class="input-group">
+          <div class="input-field">
+            <textarea
+              x-model="messageInput"
+              @input="updateCharCount()"
+              @keydown.enter.prevent="handleEnter($event)"
+              :disabled="isSending"
+              placeholder="Напишите сообщение Фруктику..."
+              class="textarea"
+              id="messageInput"
+              rows="1"></textarea>
+
+            <div class="char-counter" :class="charCounterClass" id="charCounter">
+              <span x-text="charCount"></span>/1000
+            </div>
+          </div>
+
+          <button
+            @click="sendMessage()"
+            :disabled="!messageInput.trim() || isSending"
+            class="btn-send"
+            id="sendButton">
+            <i class="fas" :class="isSending ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
+          </button>
+        </div>
+
+        <div class="quick-actions">
+          <button @click="setQuickQuestion('Помоги решить задачу')" class="quick-action-btn">
+            <i class="fas fa-lightbulb"></i><span>Решить задачу</span>
+          </button>
+          <button @click="setRandomTopic()" class="quick-action-btn">
+            <i class="fas fa-book-open"></i><span>Объяснить тему</span>
+          </button>
+          <button @click="setQuickQuestion('Подготовь меня к контрольной')" class="quick-action-btn">
+            <i class="fas fa-graduation-cap"></i><span>Подготовка</span>
+          </button>
+          <button @click="showRandomFact()" class="quick-action-btn btn-fun-fact">
+            <i class="fas fa-star"></i><span>Случайный факт</span>
+          </button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Welcome Modal (ВАЖНО: display none по умолчанию) -->
+  <div class="modal" id="welcomeModal" style="display:none;">
+    <div class="modal-overlay" @click="closeWelcomeModal()"></div>
+    <div class="modal-content glass" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🍓 Добро пожаловать в Фруктик Чат!</h3>
+        <button @click="closeWelcomeModal()" class="btn-icon">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- ... содержимое как у тебя ... -->
+        <div class="text-center mb-6">
+          <div class="fruit-icons-grid mb-4">
+            <div class="fruit-icon">🍎</div>
+            <div class="fruit-icon">🍌</div>
+            <div class="fruit-icon">🍇</div>
+            <div class="fruit-icon">🍊</div>
+            <div class="fruit-icon">🍓</div>
+            <div class="fruit-icon">🍉</div>
+          </div>
+          <h4 class="text-xl font-bold text-gray-800 mb-2">Ваш AI помощник для учёбы</h4>
+          <p class="text-gray-600">
+            Фруктик поможет с уроками, объяснит сложные темы и сделает обучение интересным!
+          </p>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button @click="closeWelcomeModal()" class="btn-primary w-full">
+          <i class="fas fa-play mr-2"></i> Начать общение
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Facts Modal (ВАЖНО: display none по умолчанию) -->
+  <div class="modal" id="factsModal" style="display:none;">
+    <div class="modal-overlay" @click="closeFactsModal()"></div>
+    <div class="modal-content glass" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <span id="factFruitIcon" style="margin-right: 10px; display: inline-block;">✨</span>
+          Интересный факт
+        </h3>
+        <button @click="closeFactsModal()" class="btn-icon" aria-label="Закрыть">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="fact-category mb-4" id="factCategory"></div>
+        <div class="fact-content">
+          <p id="factText" class="fact-text-entrance">Загрузка факта...</p>
+          <div class="fact-number-display">
+            <span class="text-gray-600 text-sm">
+              Факт <span id="factNumber" class="font-bold text-primary-gradient">1</span> из 100
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button @click="shareFact()" class="btn-secondary" title="Поделиться фактом">
+          <i class="fas fa-share-alt"></i>
+          <span class="hidden sm:inline">Поделиться</span>
+        </button>
+        <button @click="showRandomFact()" class="btn-primary" title="Случайный факт">
+          <i class="fas fa-random"></i>
+          <span class="hidden sm:inline">Другой факт</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clear Confirm Modal (ВАЖНО: display none по умолчанию) -->
+  <div class="modal" id="clearConfirmModal" style="display:none;">
+    <div class="modal-overlay" @click="closeClearConfirmModal()"></div>
+    <div class="modal-content glass">
+      <div class="modal-header">
+        <h3 class="modal-title">⚠️ Подтверждение</h3>
+        <button @click="closeClearConfirmModal()" class="btn-icon">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="text-center py-6">
+          <div class="text-5xl mb-4 text-red-500">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <h4 class="text-xl font-bold text-gray-800 mb-2">Удалить все чаты?</h4>
+          <p class="text-gray-600">
+            Это действие удалит все ваши чаты и сообщения. Это действие нельзя отменить.
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button @click="closeClearConfirmModal()" class="btn-secondary">Отмена</button>
+        <button @click="confirmClearAllChats()" class="btn-clear-all">
+          <i class="fas fa-trash-alt"></i>
+          Удалить всё
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Message -->
+  <div class="status-message" id="statusMessage"></div>
+
+  <!-- Eco Mode Indicator -->
+  <div class="eco-mode-indicator" id="ecoModeIndicator">
+    <i class="fas fa-leaf"></i>
+    <span>Экономичный режим</span>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="js/fruit-icons.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false },
+            { left: '\\(', right: '\\)', display: false },
+            { left: '\\[', right: '\\]', display: true }
+          ],
+          throwOnError: false
         });
-    </script>
+      }
+    });
+  </script>
 </body>
 </html>
