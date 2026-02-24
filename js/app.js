@@ -1,4 +1,768 @@
-// ===== Data providers (ОБНОВЛЕНО с новыми фактами) =====
+function fruitChatApp() {
+  // ===== Utils =====
+  const $ = (sel, root = document) => root.querySelector(sel);
+
+  const nowISO = () => new Date().toISOString();
+
+  function safeJsonParse(v, fallback) {
+    try { return JSON.parse(v); } catch { return fallback; }
+  }
+
+  function uid(prefix = 'chat') {
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+  }
+
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => modal.classList.add('active'));
+  }
+
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.classList.remove('active');
+    setTimeout(() => { modal.style.display = 'none'; }, 300);
+  }
+
+  function setTypingVisible(isVisible) {
+    const el = document.getElementById('typingIndicator');
+    if (!el) return;
+    el.style.display = isVisible ? 'block' : 'none';
+  }
+
+  // ===== App =====
+  return {
+    // State
+    chats: [],
+    currentChatId: null,
+    currentChat: null,
+
+    messageInput: '',
+    charCount: 0,
+
+    isSending: false,
+    isTyping: false,
+
+    sidebarOpen: false,
+    fruitRainInterval: null,
+
+    userFruitIcon: '🍓',
+    ecoMode: false,
+
+    // Facts/topics
+    interestingFacts: [],
+    topics: [],
+
+    // internal
+    _saveTimer: null,
+
+    // ===== Computed =====
+    get sortedChats() {
+      return [...this.chats].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    },
+
+    get charCounterClass() {
+      if (this.charCount > 900) return 'error';
+      if (this.charCount > 800) return 'warning';
+      return '';
+    },
+
+    // ===== Init =====
+    async init() {
+      // 1) Данные
+      this.interestingFacts = this._getFacts();
+      this.topics = this._getTopics();
+
+      // 2) Конфиг/чаты
+      await this.loadConfig();
+      await this.loadChats();
+
+      // 3) Events + эффекты
+      this.setupEventListeners();
+      this.updateCharCount();
+
+      // 4) Eco mode
+      const savedEcoMode = localStorage.getItem('fruitChatEcoMode');
+      if (savedEcoMode !== null) {
+        this.ecoMode = !!safeJsonParse(savedEcoMode, false);
+      }
+      this.detectLowPerformance();
+      this.applyEcoMode();
+
+      // 5) Первый визит
+      const hasVisited = localStorage.getItem('hasVisited');
+      if (!hasVisited) {
+        this.showWelcomeModal();
+        localStorage.setItem('hasVisited', 'true');
+      }
+
+      // 6) Focus
+      setTimeout(() => $('#messageInput')?.focus(), 300);
+
+      console.log('🍓 Фруктик Чат инициализирован');
+    },
+
+    // ===== Performance / Eco =====
+    detectLowPerformance() {
+      const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const lowCores = navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
+      const lowMem = navigator.deviceMemory && navigator.deviceMemory < 4;
+
+      const isLowPerformance = !!(reducedMotion || lowCores || lowMem);
+
+      if (isLowPerformance && !this.ecoMode) {
+        this.ecoMode = true;
+        localStorage.setItem('fruitChatEcoMode', JSON.stringify(true));
+        this.applyEcoMode();
+        this.showStatus('Автоматически включен экономичный режим для улучшения производительности', 'info');
+      }
+    },
+
+    toggleEcoMode() {
+      this.ecoMode = !this.ecoMode;
+      localStorage.setItem('fruitChatEcoMode', JSON.stringify(this.ecoMode));
+      this.applyEcoMode();
+      this.showStatus(
+        this.ecoMode ? 'Экономичный режим включен. Нагрузка уменьшена.' : 'Экономичный режим выключен.',
+        'success'
+      );
+    },
+
+    applyEcoMode() {
+      document.body.classList.toggle('eco-mode', this.ecoMode);
+      this.startFruitRain();
+    },
+
+    // ===== Config / Storage =====
+    async loadConfig() {
+      try {
+        const savedUserIcon = localStorage.getItem('userFruitIcon');
+        if (savedUserIcon) {
+          this.userFruitIcon = savedUserIcon;
+        } else {
+          this.generateUserFruitIcon();
+        }
+      } catch (e) {
+        console.error('Ошибка загрузки конфигурации:', e);
+      }
+    },
+
+    async loadChats() {
+      try {
+        const saved = localStorage.getItem('fruitChats');
+        if (!saved) {
+          this.createNewChat();
+          return;
+        }
+
+        const parsed = safeJsonParse(saved, []);
+        if (!Array.isArray(parsed)) {
+          this.createNewChat();
+          return;
+        }
+
+        this.chats = parsed;
+
+        if (!this.chats.length) {
+          this.createNewChat();
+          return;
+        }
+
+        const lastActive = localStorage.getItem('lastActiveChat');
+        this.currentChatId = lastActive || this.chats[0].id;
+        this.currentChat = this.chats.find(c => c.id === this.currentChatId) || this.chats[0];
+
+        this.renderMessages();
+      } catch (e) {
+        console.error('Ошибка загрузки чатов:', e);
+        this.createNewChat();
+      }
+    },
+
+    saveChats() {
+      try {
+        localStorage.setItem('fruitChats', JSON.stringify(this.chats));
+        if (this.currentChatId) localStorage.setItem('lastActiveChat', this.currentChatId);
+      } catch (e) {
+        console.error('Ошибка сохранения чатов:', e);
+      }
+    },
+
+    scheduleSaveChats() {
+      clearTimeout(this._saveTimer);
+      this._saveTimer = setTimeout(() => this.saveChats(), 200);
+    },
+
+    // ===== Chat CRUD =====
+    createNewChat() {
+      const newChat = {
+        id: uid('chat'),
+        title: 'Новый чат',
+        messages: [],
+        createdAt: nowISO(),
+        updatedAt: nowISO()
+      };
+
+      this.chats.push(newChat);
+      this.currentChatId = newChat.id;
+      this.currentChat = newChat;
+
+      this.scheduleSaveChats();
+      this.renderMessages();
+      this.closeSidebar();
+      this.showStatus('Новый чат создан!', 'success');
+
+      setTimeout(() => $('#messageInput')?.focus(), 100);
+    },
+
+    loadChat(chatId) {
+      this.currentChatId = chatId;
+      this.currentChat = this.chats.find(c => c.id === chatId) || null;
+      this.renderMessages();
+      this.closeSidebar();
+      this.showStatus('Чат загружен', 'success');
+    },
+
+    deleteChat(chatId) {
+      if (this.chats.length <= 1) {
+        this.showStatus('Нельзя удалить последний чат', 'error');
+        return;
+      }
+
+      if (!confirm('Удалить этот чат? Все сообщения будут потеряны.')) return;
+
+      const idx = this.chats.findIndex(c => c.id === chatId);
+      if (idx >= 0) this.chats.splice(idx, 1);
+
+      if (this.currentChatId === chatId) {
+        this.currentChat = this.chats[0] || null;
+        this.currentChatId = this.currentChat ? this.currentChat.id : null;
+        this.renderMessages();
+      }
+
+      this.scheduleSaveChats();
+      this.showStatus('Чат удалён', 'success');
+    },
+
+    // ===== Clear all chats =====
+    showClearConfirmModal() {
+      if (!this.chats.length) {
+        this.showStatus('Нет чатов для удаления', 'info');
+        return;
+      }
+      openModal('clearConfirmModal');
+    },
+
+    closeClearConfirmModal() {
+      closeModal('clearConfirmModal');
+    },
+
+    confirmClearAllChats() {
+      this.chats = [];
+      this.currentChatId = null;
+      this.currentChat = null;
+
+      this.saveChats();
+      this.createNewChat();
+
+      this.closeClearConfirmModal();
+      this.showStatus('Все чаты удалены', 'success');
+    },
+
+    // ===== Sidebar =====
+    openSidebar() {
+      this.sidebarOpen = true;
+      document.body.style.overflow = 'hidden';
+    },
+
+    closeSidebar() {
+      this.sidebarOpen = false;
+      document.body.style.overflow = '';
+    },
+
+    // ===== Welcome modal =====
+    showWelcomeModal() {
+      openModal('welcomeModal');
+    },
+
+    closeWelcomeModal() {
+      closeModal('welcomeModal');
+      setTimeout(() => $('#messageInput')?.focus(), 100);
+    },
+
+    // ===== Messages =====
+    escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    },
+
+    addMessage(role, content, opts = {}) {
+      const { skipScroll = false, skipKatex = false } = opts;
+
+      const messagesList = document.getElementById('messagesList');
+      if (!messagesList) return;
+
+      const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+      const userFruit = this.userFruitIcon;
+      const assistantFruit = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
+
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${role === 'user' ? 'message-user' : 'message-assistant'}`;
+
+      messageDiv.innerHTML = `
+        <div class="${role === 'user' ? 'message-user' : 'message-assistant'}">
+          ${role !== 'user' ? `
+            <div class="avatar avatar-assistant animated-fruit">
+              <div class="avatar-inner"><span>${assistantFruit}</span></div>
+            </div>` : ''
+          }
+
+          <div class="bubble ${role === 'user' ? 'bubble-user' : 'bubble-assistant'}">
+            <div class="message-content">${this.escapeHtml(content)}</div>
+            <div class="message-time">${time}</div>
+          </div>
+
+          ${role === 'user' ? `
+            <div class="avatar avatar-user animated-fruit">
+              <div class="avatar-inner"><span>${userFruit}</span></div>
+            </div>` : ''
+          }
+        </div>
+      `;
+
+      messagesList.appendChild(messageDiv);
+
+      if (!skipScroll) this.scrollToBottom();
+
+      if (!skipKatex) {
+        setTimeout(() => {
+          if (window.renderMathInElement) {
+            window.renderMathInElement(messageDiv, {
+              delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+              ],
+              throwOnError: false
+            });
+          }
+        }, 50);
+      }
+    },
+
+    renderMessages() {
+      const messagesList = document.getElementById('messagesList');
+      if (!messagesList) return;
+
+      messagesList.innerHTML = '';
+      if (!this.currentChat?.messages?.length) return;
+
+      this.currentChat.messages.forEach(msg => {
+        this.addMessage(msg.role, msg.content, { skipScroll: true, skipKatex: true });
+      });
+
+      this.scrollToBottom();
+
+      setTimeout(() => {
+        if (window.renderMathInElement) {
+          window.renderMathInElement(messagesList, {
+            delimiters: [
+              { left: '$$', right: '$$', display: true },
+              { left: '$', right: '$', display: false },
+              { left: '\\(', right: '\\)', display: false },
+              { left: '\\[', right: '\\]', display: true }
+            ],
+            throwOnError: false
+          });
+        }
+      }, 0);
+    },
+
+    scrollToBottom() {
+      setTimeout(() => {
+        const container = document.querySelector('.messages-container');
+        if (container) container.scrollTop = container.scrollHeight;
+      }, 50);
+    },
+
+    // ===== Input =====
+    updateCharCount() {
+      this.charCount = this.messageInput.length;
+
+      const textarea = document.getElementById('messageInput');
+      if (!textarea) return;
+
+      textarea.style.height = 'auto';
+
+      const cs = window.getComputedStyle(textarea);
+      const minHeight = parseInt(cs.minHeight, 10) || 64;
+      const maxHeight = parseInt(cs.maxHeight, 10) || 192;
+      const lineHeight = parseInt(cs.lineHeight, 10) || 24;
+
+      const rows = (textarea.value || '').split('\n').length;
+      const calculated = Math.max(minHeight, Math.min(maxHeight, rows * lineHeight + 32));
+      textarea.style.height = calculated + 'px';
+
+      const sendButton = document.getElementById('sendButton');
+      if (sendButton) {
+        sendButton.style.height = calculated + 'px';
+        sendButton.style.minHeight = calculated + 'px';
+      }
+    },
+
+    handleEnter(event) {
+      if (event.shiftKey) return;
+      event.preventDefault();
+      if (this.messageInput.trim() && !this.isSending) this.sendMessage();
+    },
+
+    setQuickQuestion(question) {
+      this.messageInput = question;
+      this.updateCharCount();
+      setTimeout(() => $('#messageInput')?.focus(), 50);
+    },
+
+    setRandomTopic() {
+      if (!this.topics.length) {
+        this.showStatus('Нет доступных тем', 'error');
+        return;
+      }
+      const topic = this.topics[Math.floor(Math.random() * this.topics.length)];
+      this.messageInput = `Объясни тему: "${topic}" простым языком для школьника.`;
+      this.updateCharCount();
+      this.showStatus(`Выбрана тема: ${topic}`, 'success');
+      setTimeout(() => $('#messageInput')?.focus(), 50);
+    },
+
+    // ===== Send =====
+    async sendMessage() {
+      if (!this.messageInput.trim() || this.isSending) return;
+
+      const message = this.messageInput.trim();
+      this.messageInput = '';
+      this.updateCharCount();
+
+      if (!this.currentChat) this.createNewChat();
+
+      this.addMessage('user', message);
+
+      this.currentChat.messages.push({ role: 'user', content: message, timestamp: nowISO() });
+
+      if (this.currentChat.messages.length === 1) {
+        this.currentChat.title = message.length > 30 ? message.substring(0, 30) + '...' : message;
+      }
+
+      this.currentChat.updatedAt = nowISO();
+      this.scheduleSaveChats();
+
+      this.isTyping = true;
+      this.isSending = true;
+      setTypingVisible(true);
+
+      try {
+        const response = await this.callMistralAPI(message);
+
+        this.addMessage('assistant', response);
+
+        this.currentChat.messages.push({ role: 'assistant', content: response, timestamp: nowISO() });
+        this.currentChat.updatedAt = nowISO();
+        this.scheduleSaveChats();
+
+        this.showStatus('Ответ получен!', 'success');
+
+        if (window.appAnimations?.fruitShower) {
+          window.appAnimations.fruitShower(this.ecoMode ? 10 : 20);
+        } else if (window.animateFruitRain) {
+          window.animateFruitRain(this.ecoMode ? 10 : 20);
+        }
+      } catch (error) {
+        console.error('API Error:', error);
+        this.handleAPIError(error);
+      } finally {
+        this.isTyping = false;
+        this.isSending = false;
+        setTypingVisible(false);
+      }
+    },
+
+    // ===== API =====
+    async callMistralAPI(message) {
+      const API_KEY = 'mdrxaCgD40KF6nLH172p9vN59EFJRnhP';
+      const API_URL = 'https://api.mistral.ai/v1/chat/completions';
+
+      const messages = [
+        {
+          role: 'system',
+          content: `Ты - Фруктик, дружелюбный AI помощник для детей школьного возраста. Твои задачи:
+1. Помогать с учебой (математика, русский язык, окружающий мир и т.д.)
+2. Объяснять сложные темы простыми словами
+3. Проверять задания на ошибки
+4. Мотивировать похвалой за правильный ответ и поддерживать любознательность
+5. Использовать эмодзи для дружелюбного общения
+6. Всегда быть вежливым и терпеливым
+7. Давать развернутые, но понятные ответы
+8. Использовать правильное форматирование математических выражений:
+ - Дроби: ½ или 3/4
+ - Степени: x², a³
+ - Квадратный корень: √25
+ - Математические символы: ×, ÷, ±, ≈, ≠, ≤, ≥
+ - Греческие буквы: π, α, β, γ
+9. Использовать KaTeX для сложных математических формул:
+ - Инлайн формулы: $E = mc^2$
+ - Отдельные формулы: $$\\\\int_{a}^{b} f(x) dx$$
+10. Объяснять математические понятия как в учебниках
+11. Не давать ответы напрямую, а подталкивать к решению
+12. Соблюдать законодательство РФ
+13. Если в сообщении ребёнка есть грамматическая ошибка то обращать на неё внимание и объяснять как писать правильно
+Твой характер: добрый, умный, терпеливый, с чувством юмора.`
+        },
+        ...this.currentChat.messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
+        { role: 'user', content: message }
+      ];
+
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'mistral-small',
+          messages,
+          max_tokens: 800,
+          temperature: 0.7,
+          stream: false
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error?.message || 'Ошибка API');
+      }
+
+      const data = await response.json();
+      return data.choices[0].message.content;
+    },
+
+    handleAPIError(error) {
+      let message = 'Ошибка при получении ответа';
+      const msg = String(error?.message || '');
+
+      if (msg.includes('401') || msg.toLowerCase().includes('authentication')) {
+        message = 'Используется тестовый ключ, попробуйте позже';
+      } else if (msg.includes('429')) {
+        message = 'Слишком много запросов. Попробуйте позже.';
+      } else if (msg.toLowerCase().includes('network')) {
+        message = 'Проблемы с сетью. Проверьте подключение.';
+      }
+
+      this.showStatus(message, 'error');
+      this.addMessage('assistant', `Извини, произошла ошибка: ${message}. Попробуй еще раз! 🍓`);
+    },
+
+    // ===== Fruit rain =====
+    startFruitRain() {
+      this.stopFruitRain();
+
+      if (window.FruitRainEngine?.start) {
+        this.fruitRainInterval = window.FruitRainEngine.start({ eco: this.ecoMode });
+        return;
+      }
+
+      if (window.appAnimations?.startContinuousFruitRain) {
+        this.fruitRainInterval = window.appAnimations.startContinuousFruitRain();
+        return;
+      }
+
+      // fallback: лёгкий дождь
+      const createFruit = () => {
+        if (document.hidden) return;
+        const rain = document.getElementById('fruitRain');
+        if (!rain) return;
+
+        const fruit = document.createElement('div');
+        fruit.className = this.ecoMode ? 'fruit eco-fruit' : 'fruit';
+        fruit.textContent = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
+        fruit.style.position = 'fixed';
+        fruit.style.top = '-100px';
+        fruit.style.left = `${Math.random() * 100}vw`;
+        fruit.style.fontSize = this.ecoMode ? '20px' : `${Math.floor(Math.random() * 24 + 24)}px`;
+        fruit.style.opacity = this.ecoMode ? '0.3' : String(Math.random() * 0.4 + 0.3);
+        fruit.style.pointerEvents = 'none';
+        fruit.style.animation = `${this.ecoMode ? 'fruit-drop-simple' : 'fruit-drop'} ${this.ecoMode ? 1.5 : 2}s linear 0ms forwards`;
+        fruit.addEventListener('animationend', () => fruit.remove(), { once: true });
+        rain.appendChild(fruit);
+      };
+
+      // старт + интервал
+      for (let i = 0; i < 8; i++) setTimeout(createFruit, i * 150);
+      this.fruitRainInterval = setInterval(createFruit, this.ecoMode ? 1000 : 400);
+    },
+
+    stopFruitRain() {
+      if (window.FruitRainEngine?.stop) window.FruitRainEngine.stop();
+      if (this.fruitRainInterval) {
+        clearInterval(this.fruitRainInterval);
+        this.fruitRainInterval = null;
+      }
+    },
+
+    // ===== Facts modal =====
+    showRandomFact(category = null) {
+      openModal('factsModal');
+
+      let list = this.interestingFacts;
+      if (category) list = this.interestingFacts.filter(f => f.category === category);
+      if (!list.length) list = this.interestingFacts;
+
+      const fact = list[Math.floor(Math.random() * list.length)];
+
+      const fruitIconEl = document.getElementById('factFruitIcon');
+      if (fruitIconEl) {
+        fruitIconEl.textContent = window.getFactIconByCategory
+          ? window.getFactIconByCategory(fact.category)
+          : (window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓');
+      }
+
+      const catEl = document.getElementById('factCategory');
+      if (catEl) {
+        const names = {
+          science: '🔬 Наука',
+          nature: '🌿 Природа',
+          space: '🚀 Космос',
+          history: '🏛️ История',
+          tech: '💻 Технологии'
+        };
+        catEl.innerHTML = `<span class="category-badge category-${fact.category}">${names[fact.category] || '📚 Факт'}</span>`;
+        if (window.appAnimations?.animateFactCategory) window.appAnimations.animateFactCategory(catEl);
+      }
+
+      const textEl = document.getElementById('factText');
+      if (textEl) {
+        textEl.textContent = fact.text;
+        if (window.appAnimations?.animateFactText) window.appAnimations.animateFactText(textEl);
+      }
+
+      const numEl = document.getElementById('factNumber');
+      if (numEl) {
+        const idx = this.interestingFacts.findIndex(f => f.text === fact.text) + 1;
+        numEl.textContent = String(idx);
+        if (window.appAnimations?.animateFactCounter) window.appAnimations.animateFactCounter(numEl);
+      }
+
+      if (fruitIconEl && window.appAnimations?.animateFactIcon) window.appAnimations.animateFactIcon(fruitIconEl);
+
+      if (window.appAnimations?.fruitShower) window.appAnimations.fruitShower(this.ecoMode ? 5 : 10);
+    },
+
+    closeFactsModal() {
+      closeModal('factsModal');
+      setTimeout(() => $('#messageInput')?.focus(), 100);
+    },
+
+    shareFact() {
+      const factText = document.getElementById('factText')?.textContent;
+      if (!factText) return;
+
+      const shareText = `🍓 Интересный факт от Фруктик Чата:\n\n${factText}\n\nПопробуй Фруктик Чат - AI помощник для учёбы!`;
+
+      if (navigator.share) {
+        navigator.share({ title: 'Интересный факт', text: shareText, url: window.location.href })
+          .then(() => this.showStatus('Факт успешно отправлен!', 'success'))
+          .catch(() => this.fallbackCopy(shareText));
+      } else {
+        this.fallbackCopy(shareText);
+      }
+    },
+
+    fallbackCopy(text) {
+      navigator.clipboard.writeText(text)
+        .then(() => this.showStatus('Факт скопирован в буфер обмена!', 'success'))
+        .catch(() => this.showStatus('Не удалось скопировать факт', 'error'));
+    },
+
+    // ===== Status =====
+    showStatus(message, type = 'info') {
+      const el = document.getElementById('statusMessage');
+      if (!el) return;
+
+      el.textContent = message;
+      el.className = `status-message status-${type}`;
+      el.classList.add('show');
+
+      setTimeout(() => el.classList.remove('show'), 3000);
+    },
+
+    // ===== Preview/time =====
+    getChatPreview(chat) {
+      if (!chat.messages?.length) return 'Нет сообщений';
+      const last = chat.messages[chat.messages.length - 1];
+      const content = last.content.length > 40 ? last.content.substring(0, 40) + '...' : last.content;
+      return last.role === 'user' ? `Вы: ${content}` : `Фруктик: ${content}`;
+    },
+
+    formatTime(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diff = now - date;
+
+      if (diff < 60000) return 'только что';
+      if (diff < 3600000) return Math.floor(diff / 60000) + ' мин назад';
+      if (diff < 86400000) return Math.floor(diff / 3600000) + ' ч назад';
+      if (diff < 172800000) return 'вчера';
+
+      return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+    },
+
+    // ===== User icon =====
+    generateUserFruitIcon() {
+      const fruits = ['🍎', '🍊', '🍋', '🍇', '🍓', '🍉', '🍌', '🥭', '🍍', '🥝'];
+      this.userFruitIcon = fruits[Math.floor(Math.random() * fruits.length)];
+      localStorage.setItem('userFruitIcon', this.userFruitIcon);
+    },
+
+    // ===== Events =====
+    setupEventListeners() {
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) this.stopFruitRain();
+        else this.startFruitRain();
+      });
+
+      window.addEventListener('beforeunload', (e) => {
+        if (this.isSending) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          this.closeWelcomeModal();
+          this.closeFactsModal();
+          this.closeClearConfirmModal();
+          this.closeSidebar();
+        }
+      });
+
+      document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+          if (e.target !== overlay) return;
+          const modal = overlay.closest('.modal');
+          if (!modal) return;
+
+          if (modal.id === 'welcomeModal') this.closeWelcomeModal();
+          if (modal.id === 'factsModal') this.closeFactsModal();
+          if (modal.id === 'clearConfirmModal') this.closeClearConfirmModal();
+        });
+      });
+    },
+
+    // ===== Data providers (ОБНОВЛЕНО с новыми фактами) =====
     _getFacts() {
       return [
         // Наука
