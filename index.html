@@ -2,7 +2,7 @@
 <html lang="ru" class="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Фруктик Чат - умный AI помощник для детей в учёбе">
   <meta name="keywords" content="AI чат, Mistral, помощник, дети, учёба, русский язык">
   <title>🍓 Фруктик Чат - AI Помощник</title>
@@ -12,8 +12,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Фруктик Чат">
-  <meta name="theme-color" content="#ff6b6b">
-  <meta name="msapplication-TileColor" content="#ff6b6b">
+  <meta name="theme-color" content="#667eea">
+  <meta name="msapplication-TileColor" content="#667eea">
   <meta name="color-scheme" content="light only">
 
   <!-- Preconnect -->
@@ -56,7 +56,13 @@
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js')
           .then(registration => console.log('ServiceWorker registered:', registration))
-          .catch(error => console.log('ServiceWorker registration failed:', error));
+          .catch(error => {
+            console.log('ServiceWorker registration failed:', error);
+            // Показываем уведомление пользователю, если нужно
+            if (window.showStatus) {
+              window.showStatus('Не удалось установить офлайн-режим', 'warning');
+            }
+          });
       });
     }
   </script>
@@ -152,6 +158,13 @@
     <main class="messages-container">
       <div id="messagesList"></div>
 
+      <!-- Typing Indicator -->
+      <div id="typingIndicator" class="typing-indicator" style="display: none;">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
       <div x-show="currentChat?.messages?.length === 0" class="empty-state">
         <div class="empty-state-icon">🍓</div>
         <h2 class="empty-state-title">Начните общение с Фруктиком!</h2>
@@ -199,7 +212,7 @@
 
           <button
             @click="sendMessage()"
-            :disabled="!messageInput.trim() || isSending"
+            :disabled="!messageInput.trim() || isSending || charCount > 1000"
             class="btn-send"
             id="sendButton">
             <i class="fas" :class="isSending ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
@@ -301,7 +314,7 @@
           <p id="factText" class="fact-text-entrance">Загрузка факта...</p>
           <div class="fact-number-display">
             <span class="text-gray-600 text-sm">
-              Факт <span id="factNumber" class="font-bold text-primary-gradient">1</span> из 140
+              Факт <span id="factNumber" class="font-bold text-primary-gradient">1</span> из 189
             </span>
           </div>
         </div>
