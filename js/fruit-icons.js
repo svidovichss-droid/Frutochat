@@ -1,18 +1,18 @@
-// fruit-icons.js — финальная версия (категории + делегирование дождя)
+// fruit-icons.js — окончательная версия (категории + делегирование дождя)
 (function () {
   'use strict';
 
-  const FRUITS_MAIN = ['🍓', '🍍', '🍇', '🍉', '🍊', '🍋', '🍌', '🍎', '🍑', '🍒'];
-  const FRUITS_SEASONAL = ['🥭', '🫐', '🍐', '🥝', '🍈', '🥥', '🌰', '🥭'];
+  const FRUITS_MAIN = ['🍎', '🍊', '🍋', '🍇', '🍓', '🍉', '🍌', '🥭', '🍍', '🥝'];
+  const FRUITS_SEASONAL = ['🥥', '🫐', '🍐', '🥝', '🍒', '🥥', '🌰', '🥜'];
   const FRUITS_FUN = ['🍏', '🍅', '🍆', '🥑', '🌽', '🥦', '🥬', '🥒'];
 
   const CATEGORY_ICONS = {
     science: ['🔬', '🧪', '⚗️', '🧫', '🔭', '⚛️', '🧬', '🦠', '🌡️', '🧲'],
-    nature: ['🌿', '🍃', '🌺', '🌸', '🌼', '🌳', '🐝', '🦋', '🐞', '🌱'],
+    nature: ['🌿', '🍃', '🌺', '🌲', '🌳', '🌍', '🐝', '🦋', '🐞', '🌱'],
     space: ['🚀', '🪐', '🌕', '🌌', '⭐', '🌠', '☄️', '🛰️', '👨‍🚀', '👩‍🚀'],
     history: ['🏛️', '📜', '⚔️', '👑', '🗿', '🏺', '⚱️', '🕰️', '🗺️', '🏰'],
     tech: ['💻', '📱', '🔌', '🖥️', '⌨️', '🖱️', '💾', '📡', '🤖', '⚡'],
-    math: ['📐', '🧮', '🔢', '📏', '➕', '➖', '✖️', '➗', 'π', '∞'],
+    math: ['📐', '🧮', '🔢', '📏', '➗', '➖', '✖️', '➕', 'π', '∞'],
     general: FRUITS_MAIN
   };
 
@@ -54,11 +54,13 @@
     const fruitRain = document.getElementById('fruitRain');
     if (!fruitRain) return;
 
+    const getIcon = window.getRandomFruitIcon || (() => '🍓');
+
     const frag = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
       const fruit = document.createElement('div');
       fruit.className = 'fruit';
-      fruit.textContent = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
+      fruit.textContent = getIcon();
       fruit.style.left = `${Math.random() * 100}vw`;
       fruit.style.top = '-100px';
       fruit.style.position = 'fixed';
