@@ -29,7 +29,7 @@ function fruitChatApp() {
   function setTypingVisible(isVisible) {
     const el = document.getElementById('typingIndicator');
     if (!el) return;
-    el.style.display = isVisible ? 'block' : 'none';
+    el.style.display = isVisible ? 'flex' : 'none';
   }
 
   // ===== Encrypted API key =====
@@ -100,18 +100,27 @@ function fruitChatApp() {
       this.updateCharCount();
 
       // 4) Eco mode
-      const savedEcoMode = localStorage.getItem('fruitChatEcoMode');
-      if (savedEcoMode !== null) {
-        this.ecoMode = !!safeJsonParse(savedEcoMode, false);
+      try {
+        const savedEcoMode = localStorage.getItem('fruitChatEcoMode');
+        if (savedEcoMode !== null) {
+          this.ecoMode = !!safeJsonParse(savedEcoMode, false);
+        }
+      } catch (e) {
+        console.warn('localStorage not available');
       }
       this.detectLowPerformance();
       this.applyEcoMode();
 
       // 5) Первый визит
-      const hasVisited = localStorage.getItem('hasVisited');
+      let hasVisited = false;
+      try {
+        hasVisited = !!localStorage.getItem('hasVisited');
+      } catch (e) {}
       if (!hasVisited) {
         this.showWelcomeModal();
-        localStorage.setItem('hasVisited', 'true');
+        try {
+          localStorage.setItem('hasVisited', 'true');
+        } catch (e) {}
       }
 
       // 6) Focus
@@ -130,7 +139,9 @@ function fruitChatApp() {
 
       if (isLowPerformance && !this.ecoMode) {
         this.ecoMode = true;
-        localStorage.setItem('fruitChatEcoMode', JSON.stringify(true));
+        try {
+          localStorage.setItem('fruitChatEcoMode', JSON.stringify(true));
+        } catch (e) {}
         this.applyEcoMode();
         this.showStatus('Автоматически включен экономичный режим для улучшения производительности', 'info');
       }
@@ -138,7 +149,9 @@ function fruitChatApp() {
 
     toggleEcoMode() {
       this.ecoMode = !this.ecoMode;
-      localStorage.setItem('fruitChatEcoMode', JSON.stringify(this.ecoMode));
+      try {
+        localStorage.setItem('fruitChatEcoMode', JSON.stringify(this.ecoMode));
+      } catch (e) {}
       this.applyEcoMode();
       this.showStatus(
         this.ecoMode ? 'Экономичный режим включен. Нагрузка уменьшена.' : 'Экономичный режим выключен.',
@@ -186,7 +199,10 @@ function fruitChatApp() {
           return;
         }
 
-        const lastActive = localStorage.getItem('lastActiveChat');
+        let lastActive = null;
+        try {
+          lastActive = localStorage.getItem('lastActiveChat');
+        } catch (e) {}
         this.currentChatId = lastActive || this.chats[0].id;
         this.currentChat = this.chats.find(c => c.id === this.currentChatId) || this.chats[0];
 
@@ -309,7 +325,6 @@ function fruitChatApp() {
     },
 
     // ===== Messages =====
-    // escapeHtml больше не используется для контента, оставлен на случай, если понадобится для других целей
     escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text;
@@ -328,7 +343,7 @@ function fruitChatApp() {
       const assistantFruit = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
 
       // Рендерим Markdown для всего контента
-      const renderedContent = md.render(content);
+      const renderedContent = md ? md.render(content) : content;
 
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${role === 'user' ? 'message-user' : 'message-assistant'}`;
@@ -464,6 +479,10 @@ function fruitChatApp() {
     // ===== Send =====
     async sendMessage() {
       if (!this.messageInput.trim() || this.isSending) return;
+      if (this.charCount > 1000) {
+        this.showStatus('Сообщение слишком длинное (максимум 1000 символов)', 'error');
+        return;
+      }
 
       const message = this.messageInput.trim();
       this.messageInput = '';
@@ -609,14 +628,14 @@ function fruitChatApp() {
 
         const fruit = document.createElement('div');
         fruit.className = this.ecoMode ? 'fruit eco-fruit' : 'fruit';
-        fruit.textContent = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
+        fruit.textContent = (window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓');
         fruit.style.position = 'fixed';
         fruit.style.top = '-100px';
         fruit.style.left = `${Math.random() * 100}vw`;
         fruit.style.fontSize = this.ecoMode ? '20px' : `${Math.floor(Math.random() * 24 + 24)}px`;
         fruit.style.opacity = this.ecoMode ? '0.3' : String(Math.random() * 0.4 + 0.3);
         fruit.style.pointerEvents = 'none';
-        fruit.style.animation = `${this.ecoMode ? 'fruit-drop-simple' : 'fruit-drop'} ${this.ecoMode ? 1.5 : 2}s linear 0ms forwards`;
+        fruit.style.animation = `${this.ecoMode ? 'fruit-drop-simple' : 'fruit-drop'} ${this.ecoMode ? 1.5 : 2}s linear forwards`;
         fruit.addEventListener('animationend', () => fruit.remove(), { once: true });
         rain.appendChild(fruit);
       };
@@ -745,7 +764,9 @@ function fruitChatApp() {
     generateUserFruitIcon() {
       const fruits = ['🍎', '🍊', '🍋', '🍇', '🍓', '🍉', '🍌', '🥭', '🍍', '🥝'];
       this.userFruitIcon = fruits[Math.floor(Math.random() * fruits.length)];
-      localStorage.setItem('userFruitIcon', this.userFruitIcon);
+      try {
+        localStorage.setItem('userFruitIcon', this.userFruitIcon);
+      } catch (e) {}
     },
 
     // ===== Events =====
@@ -808,8 +829,6 @@ function fruitChatApp() {
         { category: 'science', text: 'У жирафа и человека одинаковое количество шейных позвонков - семь.' },
         { category: 'science', text: 'Комаров привлекает запах людей, которые недавно ели бананы.' },
         { category: 'science', text: 'Змеи могут спать до 3 лет подряд.' },
-        
-        // Новые факты о науке
         { category: 'science', text: 'Кровь человека содержит около 0.2 мг золота.' },
         { category: 'science', text: 'Человеческий нос может запомнить 50 000 различных запахов.' },
         { category: 'science', text: 'Сердцебиение синего кита можно услышать на расстоянии 3 километров.' },
@@ -820,7 +839,6 @@ function fruitChatApp() {
         { category: 'science', text: 'Сердце креветки находится в ее голове.' },
         { category: 'science', text: 'У морских коньков беременеют самцы, а не самки.' },
         { category: 'science', text: 'Бабочки пробуют пищу ногами.' },
-        { category: 'science', text: 'Глаз у страуса весит больше, чем его мозг.' },
         { category: 'science', text: 'Крокодилы не могут высовывать язык.' },
         { category: 'science', text: 'Жирафы могут чистить уши своим языком.' },
         { category: 'science', text: 'Сердце ежа бьется в среднем 300 раз в минуту.' },
@@ -850,8 +868,6 @@ function fruitChatApp() {
         { category: 'nature', text: 'Некоторые виды лягушек могут замерзать и оттаивать без вреда для здоровья.' },
         { category: 'nature', text: 'Растения растут быстрее под приятную музыку.' },
         { category: 'nature', text: 'Один дуб может дать до 10 000 желудей за год.' },
-        
-        // Новые факты о природе
         { category: 'nature', text: 'Некоторые виды бабочек пьют слезы черепах.' },
         { category: 'nature', text: 'У коалы отпечатки пальцев почти идентичны человеческим.' },
         { category: 'nature', text: 'Дерево секвойя может жить до 3000 лет.' },
@@ -894,8 +910,6 @@ function fruitChatApp() {
         { category: 'space', text: 'Существует планета, где идут стеклянные дожди.' },
         { category: 'space', text: 'Самый большой известный астероид весит примерно 939 000 000 000 000 тонн.' },
         { category: 'space', text: 'МКС облетает Землю за 90 минут.' },
-        
-        // Новые факты о космосе
         { category: 'space', text: 'На Луне есть запах, похожий на порох.' },
         { category: 'space', text: 'Солнечная система движется со скоростью 828 000 км/ч.' },
         { category: 'space', text: 'На Юпитере и Сатурне идет дождь из гелия.' },
@@ -911,7 +925,6 @@ function fruitChatApp() {
         { category: 'space', text: 'Солнце делает полный оборот вокруг центра Галактики за 225-250 млн лет.' },
         { category: 'space', text: 'На Венере день длиннее года.' },
         { category: 'space', text: 'Луна постепенно удаляется от Земли на 3.8 см в год.' },
-        { category: 'space', text: 'Самый большой вулкан в Солнечной системе - Олимп на Марсе.' },
         { category: 'space', text: 'На Нептуне дуют самые сильные ветра - до 2100 км/ч.' },
         { category: 'space', text: 'Меркурий - самая быстрая планета, обращается вокруг Солнца за 88 дней.' },
         { category: 'space', text: 'Плутон меньше, чем Россия по площади.' },
@@ -933,8 +946,6 @@ function fruitChatApp() {
         { category: 'history', text: 'В средневековой Европе считали, что помидоры ядовиты.' },
         { category: 'history', text: 'В Древнем Египте фараоны никогда не показывали свои волосы.' },
         { category: 'history', text: 'Древние римляни использовали паутину как пластырь для ран.' },
-        
-        // Новые факты об истории
         { category: 'history', text: 'В 18 веке в Европе парики посыпали мукой для белизны.' },
         { category: 'history', text: 'Первая в мире пишущая машинка была создана для слепой женщины.' },
         { category: 'history', text: 'Во время Второй мировой войны морковь рекламировали как продукт, улучшающий ночное зрение.' },
@@ -942,7 +953,6 @@ function fruitChatApp() {
         { category: 'history', text: 'Римские гладиаторы редко сражались насмерть.' },
         { category: 'history', text: 'Викинги использовали солнечный камень для навигации в пасмурную погоду.' },
         { category: 'history', text: 'В средневековой Европе апельсины были доступны только богачам.' },
-        { category: 'history', text: 'Первый компьютерный вирус был создан в 1983 году.' },
         { category: 'history', text: 'В 19 веке Лондон был покрыт слоем конского навоза толщиной до 3 метров.' },
         { category: 'history', text: 'В Древней Греции олимпийцы соревновались обнаженными.' },
         { category: 'history', text: 'Наполеон был ниже среднего роста своего времени.' },
@@ -973,8 +983,6 @@ function fruitChatApp() {
         { category: 'tech', text: 'Первый iPod мог хранить около 1000 песен.' },
         { category: 'tech', text: 'Windows 95 стоила 210 долларов при выпуске.' },
         { category: 'tech', text: 'Первый смайлик :-) был использован в 1982 году.' },
-        
-        // Новые факты о технологиях
         { category: 'tech', text: 'Первый компьютерный баг был реальным насекомым - мотыльком.' },
         { category: 'tech', text: 'Изначально Google назывался BackRub.' },
         { category: 'tech', text: 'Первый логотип Apple изображал Исаака Ньютона под яблоней.' },
@@ -1021,6 +1029,16 @@ function fruitChatApp() {
         'Комбинаторика',
         'Векторы на плоскости',
         'Метод математической индукции',
+        'Квадратные уравнения и их решение через дискриминант',
+        'Тригонометрические функции и их графики',
+        'Производная и ее применение в исследовании функций',
+        'Первообразная и интеграл',
+        'Комбинаторика: размещения, перестановки, сочетания',
+        'Теория вероятностей: случайные события, вероятность',
+        'Векторы в пространстве',
+        'Многогранники: призма, пирамида',
+        'Тела вращения: цилиндр, конус, шар',
+        'Стереометрия: взаимное расположение прямых и плоскостей в пространстве',
 
         // Русский язык
         'Части речи в русском языке',
@@ -1114,19 +1132,7 @@ function fruitChatApp() {
         'Политическая карта мира',
         'География России',
 
-        // Новые темы (математика)
-        'Квадратные уравнения и их решение через дискриминант',
-        'Тригонометрические функции и их графики',
-        'Производная и ее применение в исследовании функций',
-        'Первообразная и интеграл',
-        'Комбинаторика: размещения, перестановки, сочетания',
-        'Теория вероятностей: случайные события, вероятность',
-        'Векторы в пространстве',
-        'Многогранники: призма, пирамида',
-        'Тела вращения: цилиндр, конус, шар',
-        'Стереометрия: взаимное расположение прямых и плоскостей в пространстве',
-
-        // Новые темы (информатика)
+        // Информатика
         'Основы алгоритмизации',
         'Языки программирования: Python, JavaScript',
         'Базы данных и SQL',
@@ -1138,7 +1144,7 @@ function fruitChatApp() {
         'Структуры данных',
         'Объектно-ориентированное программирование',
 
-        // Новые темы (литература)
+        // Литература
         'Русские народные сказки',
         'Басни Крылова',
         'Творчество Пушкина',
@@ -1150,7 +1156,7 @@ function fruitChatApp() {
         'Зарубежная классика',
         'Детская литература',
 
-        // Новые темы (обществознание)
+        // Обществознание
         'Гражданское общество',
         'Права и обязанности граждан',
         'Экономические системы',
@@ -1162,7 +1168,7 @@ function fruitChatApp() {
         'Правовое государство',
         'Рыночная экономика',
 
-        // Новые темы (искусство)
+        // Искусство
         'Живопись эпохи Возрождения',
         'Русские художники-передвижники',
         'Музыкальные жанры',
@@ -1174,7 +1180,7 @@ function fruitChatApp() {
         'Современное искусство',
         'Дизайн и его виды',
 
-        // Новые темы (спорт и здоровье)
+        // Спорт и здоровье
         'Основы здорового образа жизни',
         'Виды спорта: легкая атлетика, плавание',
         'Олимпийские игры',
