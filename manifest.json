@@ -97,12 +97,6 @@
   "edge_side_panel": {},
   "prefer_related_applications": false,
   "related_applications": [],
-  "protocol_handlers": [
-    {
-      "protocol": "web+fruitychat",
-      "url": "/?chat=%s"
-    }
-  ],
   "share_target": {
     "action": "/?share",
     "method": "GET",
