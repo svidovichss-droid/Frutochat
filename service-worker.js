@@ -3,13 +3,21 @@ const CACHE_NAME = 'fruity-chat-v2.0.0';
 const ASSETS = [
     '/',
     '/index.html',
-    '/manifest.json'
+    '/manifest.json',
+    '/styles/main.css',
+    '/styles/animations.css',
+    '/styles/responsive.css',
+    '/js/fruit-icons.js',
+    '/js/animations.js',
+    '/js/app.js'
+    // Добавьте сюда пути к иконкам, если они есть
 ];
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => cache.addAll(ASSETS))
+            .catch(error => console.error('Ошибка кэширования:', error))
             .then(() => self.skipWaiting())
     );
 });
@@ -45,6 +53,7 @@ self.addEventListener('fetch', (event) => {
 
                 return fetch(event.request)
                     .then((response) => {
+                        // Кэшируем только успешные ответы с нашего origin
                         if (!response || response.status !== 200 || response.type !== 'basic') {
                             return response;
                         }
