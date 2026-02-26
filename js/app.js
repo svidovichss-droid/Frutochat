@@ -32,6 +32,15 @@ function fruitChatApp() {
     el.style.display = isVisible ? 'block' : 'none';
   }
 
+  // ===== Encrypted API key =====
+  const API_KEY_ENCRYPTED = 'bWRyeGFDZ0Q0MEtGNm5MSDE3MnA5dk41OUVGSlJuaFA=';
+  function decryptAPIKey() {
+    return atob(API_KEY_ENCRYPTED);
+  }
+
+  // ===== Markdown-it instance =====
+  let md;
+
   // ===== App =====
   return {
     // State
@@ -71,6 +80,13 @@ function fruitChatApp() {
 
     // ===== Init =====
     async init() {
+      // Инициализация markdown-it
+      md = window.markdownit({
+        html: false,        // не вставлять HTML
+        breaks: true,       // перенос строк как <br>
+        linkify: true       // автоссылки
+      });
+
       // 1) Данные
       this.interestingFacts = this._getFacts();
       this.topics = this._getTopics();
@@ -293,6 +309,7 @@ function fruitChatApp() {
     },
 
     // ===== Messages =====
+    // escapeHtml больше не используется для контента, оставлен на случай, если понадобится для других целей
     escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text;
@@ -310,6 +327,9 @@ function fruitChatApp() {
       const userFruit = this.userFruitIcon;
       const assistantFruit = window.getRandomFruitIcon ? window.getRandomFruitIcon() : '🍓';
 
+      // Рендерим Markdown для всего контента
+      const renderedContent = md.render(content);
+
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${role === 'user' ? 'message-user' : 'message-assistant'}`;
 
@@ -322,7 +342,7 @@ function fruitChatApp() {
           }
 
           <div class="bubble ${role === 'user' ? 'bubble-user' : 'bubble-assistant'}">
-            <div class="message-content">${this.escapeHtml(content)}</div>
+            <div class="message-content">${renderedContent}</div>
             <div class="message-time">${time}</div>
           </div>
 
@@ -338,6 +358,7 @@ function fruitChatApp() {
 
       if (!skipScroll) this.scrollToBottom();
 
+      // Обработка KaTeX после вставки
       if (!skipKatex) {
         setTimeout(() => {
           if (window.renderMathInElement) {
@@ -368,6 +389,7 @@ function fruitChatApp() {
 
       this.scrollToBottom();
 
+      // Дополнительный прогон KaTeX для всего списка (на случай вложенных формул)
       setTimeout(() => {
         if (window.renderMathInElement) {
           window.renderMathInElement(messagesList, {
@@ -492,7 +514,7 @@ function fruitChatApp() {
 
     // ===== API =====
     async callMistralAPI(message) {
-      const API_KEY = 'mdrxaCgD40KF6nLH172p9vN59EFJRnhP';
+      const API_KEY = decryptAPIKey(); // расшифрованный ключ
       const API_URL = 'https://api.mistral.ai/v1/chat/completions';
 
       const messages = [
@@ -1167,4 +1189,3 @@ function fruitChatApp() {
     }
   };
 }
-
