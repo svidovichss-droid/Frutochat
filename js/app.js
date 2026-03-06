@@ -213,6 +213,21 @@ function fruitChatApp() {
       }
     },
 
+    // ===== Debounce утилита для оптимизации =====
+    _debounceTimers: {},
+    
+    debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    },
+
     saveChats() {
       try {
         localStorage.setItem('fruitChats', JSON.stringify(this.chats));
@@ -223,8 +238,11 @@ function fruitChatApp() {
     },
 
     scheduleSaveChats() {
-      clearTimeout(this._saveTimer);
-      this._saveTimer = setTimeout(() => this.saveChats(), 200);
+      // Используем debounce для предотвращения частых записей в localStorage
+      if (!this._debouncedSave) {
+        this._debouncedSave = this.debounce(() => this.saveChats(), 500);
+      }
+      this._debouncedSave();
     },
 
     // ===== Chat CRUD =====
@@ -331,6 +349,29 @@ function fruitChatApp() {
       return div.innerHTML;
     },
 
+    // Кэш для отрендеренных формул KaTeX (мемоизация)
+    _katexCache: new WeakSet(),
+
+    // Рендеринг KaTeX с мемоизацией - рендерит только один раз при добавлении сообщения
+    renderKatexOnce(element) {
+      if (!window.renderMathInElement) return;
+      // Проверяем, не был ли уже отрендерен этот элемент
+      if (this._katexCache.has(element)) return;
+      
+      window.renderMathInElement(element, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true }
+        ],
+        throwOnError: false
+      });
+      
+      // Помечаем элемент как отрендеренный
+      this._katexCache.add(element);
+    },
+
     addMessage(role, content, opts = {}) {
       const { skipScroll = false, skipKatex = false } = opts;
 
@@ -373,20 +414,10 @@ function fruitChatApp() {
 
       if (!skipScroll) this.scrollToBottom();
 
-      // Обработка KaTeX после вставки
+      // Обработка KaTeX после вставки с мемоизацией (рендерим только один раз)
       if (!skipKatex) {
         setTimeout(() => {
-          if (window.renderMathInElement) {
-            window.renderMathInElement(messageDiv, {
-              delimiters: [
-                { left: '$$', right: '$$', display: true },
-                { left: '$', right: '$', display: false },
-                { left: '\\(', right: '\\)', display: false },
-                { left: '\\[', right: '\\]', display: true }
-              ],
-              throwOnError: false
-            });
-          }
+          this.renderKatexOnce(messageDiv);
         }, 50);
       }
     },
@@ -404,20 +435,10 @@ function fruitChatApp() {
 
       this.scrollToBottom();
 
-      // Дополнительный прогон KaTeX для всего списка (на случай вложенных формул)
+      // Рендеринг KaTeX для всего списка один раз (без повторного рендеринга)
       setTimeout(() => {
-        if (window.renderMathInElement) {
-          window.renderMathInElement(messagesList, {
-            delimiters: [
-              { left: '$$', right: '$$', display: true },
-              { left: '$', right: '$', display: false },
-              { left: '\\(', right: '\\)', display: false },
-              { left: '\\[', right: '\\]', display: true }
-            ],
-            throwOnError: false
-          });
-        }
-      }, 0);
+        this.renderKatexOnce(messagesList);
+      }, 100);
     },
 
     scrollToBottom() {

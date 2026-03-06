@@ -1,5 +1,12 @@
 // Анимации для приложения
 window.appAnimations = {
+    // Максимальное количество фруктов на экране
+    maxFruits: 50,
+    // Интервал для непрерывного дождя (мс)
+    fruitInterval: 800,
+    // Счетчик фруктов
+    fruitCount: 0,
+    
     // Анимация входа сообщения
     animateMessageIn: function(element) {
         element.style.opacity = '1';
@@ -9,13 +16,36 @@ window.appAnimations = {
     // Анимация праздничных фруктов
     celebrate: function() {
         // Только фруктовый дождь
-        this.fruitShower(50);
+        this.fruitShower(30);
+    },
+    
+    // Очистка старых фруктов
+    cleanupFruits: function() {
+        const fruitRain = document.getElementById('fruitRain');
+        if (!fruitRain) return;
+        
+        const fruits = fruitRain.querySelectorAll('.fruit');
+        if (fruits.length > this.maxFruits) {
+            const toRemove = fruits.length - this.maxFruits;
+            for (let i = 0; i < toRemove; i++) {
+                if (fruits[i]) fruits[i].remove();
+            }
+        }
     },
     
     // Анимация фруктового дождя
-    fruitShower: function(count = 30) {
+    fruitShower: function(count = 20) {
         const fruitRain = document.getElementById('fruitRain');
         if (!fruitRain) return;
+        
+        // Ограничиваем количество фруктов
+        this.cleanupFruits();
+        
+        const currentFruits = fruitRain.querySelectorAll('.fruit').length;
+        const availableSlots = this.maxFruits - currentFruits;
+        count = Math.min(count, availableSlots);
+        
+        if (count <= 0) return;
         
         const getIcon = window.getRandomFruitIcon || (() => '🍓');
         
@@ -30,6 +60,7 @@ window.appAnimations = {
             fruit.style.zIndex = '1';
             fruit.style.pointerEvents = 'none';
             fruit.style.animation = 'fruit-drop ' + (Math.random() * 1.5 + 1) + 's linear forwards';
+            fruit.style.willChange = 'transform, opacity';
             
             fruit.addEventListener('animationend', function() {
                 if (fruit.parentNode === fruitRain) {
@@ -49,7 +80,12 @@ window.appAnimations = {
         const getIcon = window.getRandomFruitIcon || (() => '🍓');
         
         const intervalId = setInterval(() => {
-            if (document.hidden) return; // Не создавать фрукты, если вкладка неактивна
+            if (document.hidden) return;
+            
+            // Проверяем количество фруктов
+            this.cleanupFruits();
+            const currentFruits = fruitRain.querySelectorAll('.fruit').length;
+            if (currentFruits >= this.maxFruits) return;
             
             const fruit = document.createElement('div');
             fruit.className = 'fruit';
@@ -61,6 +97,7 @@ window.appAnimations = {
             fruit.style.zIndex = '1';
             fruit.style.pointerEvents = 'none';
             fruit.style.animation = 'fruit-drop ' + (Math.random() * 1.5 + 1) + 's linear forwards';
+            fruit.style.willChange = 'transform, opacity';
             
             fruit.addEventListener('animationend', function() {
                 if (fruit.parentNode === fruitRain) {
@@ -69,7 +106,7 @@ window.appAnimations = {
             }, { once: true });
             
             fruitRain.appendChild(fruit);
-        }, 400);
+        }, this.fruitInterval);
         
         return intervalId;
     },
