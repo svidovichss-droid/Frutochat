@@ -142,6 +142,11 @@
       </div>
 
       <div class="flex items-center gap-2">
+        <!-- Network Status Indicator -->
+        <div id="networkIndicator" class="network-indicator online" aria-label="Подключено к интернету">
+          <i class="fas fa-wifi"></i>
+        </div>
+
         <button @click="toggleEcoMode()" class="btn-icon" :class="{'eco-active': ecoMode}"
                 :title="ecoMode ? 'Выключить экономичный режим' : 'Включить экономичный режим'">
           <i :class="ecoMode ? 'fas fa-bolt text-yellow-500' : 'fas fa-leaf'"></i>
@@ -379,6 +384,12 @@
 
   <!-- Status Message -->
   <div class="status-message" id="statusMessage"></div>
+
+  <!-- Network Indicator (mobile) -->
+  <div class="network-indicator-mobile" id="networkIndicatorMobile" style="display:none;">
+    <i class="fas fa-wifi"></i>
+    <span>Онлайн</span>
+  </div>
 
   <!-- Eco Mode Indicator -->
   <div class="eco-mode-indicator" id="ecoModeIndicator">
