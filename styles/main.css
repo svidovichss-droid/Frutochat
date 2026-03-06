@@ -1117,3 +1117,214 @@ body.eco-mode .animated-fruit { animation: none !important; }
 /* Responsive utility */
 @media (min-width: 768px) { .md\:inline { display: inline !important; } .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr) !important; } }
 @media (min-width: 640px) { .sm\:inline { display: inline !important; } }
+
+/* ============================================
+   Network Status Indicator Styles
+   ============================================ */
+.network-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.network-indicator i {
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.network-indicator.online {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.network-indicator.online i {
+  animation: pulse-signal 2s infinite;
+}
+
+.network-indicator.offline {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.network-indicator.offline i {
+  animation: shake 0.5s infinite;
+}
+
+.network-indicator.reconnecting {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.network-indicator.reconnecting i {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes pulse-signal {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Mobile network indicator */
+.network-indicator-mobile {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.network-indicator-mobile.online {
+  color: #10b981;
+}
+
+.network-indicator-mobile.offline {
+  color: #ef4444;
+}
+
+.network-indicator-mobile.reconnecting {
+  color: #f59e0b;
+}
+
+/* ============================================
+   Accessibility Improvements
+   ============================================ */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #667eea;
+  color: white;
+  padding: 8px 16px;
+  z-index: 10000;
+  transition: top 0.3s;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Enhanced focus styles for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+  .network-indicator {
+    border: 2px solid currentColor;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .network-indicator i {
+    animation: none !important;
+  }
+}
+
+/* ============================================
+   Virtual Scroller Styles
+   ============================================ */
+.virtual-scroller-content {
+  will-change: transform;
+  contain: strict;
+}
+
+.lazy-load-sentinel {
+  width: 100%;
+  height: 1px;
+  background: transparent;
+}
+
+/* Message list with ARIA live region styling */
+.messages-container[role="log"] {
+  scroll-behavior: smooth;
+}
+
+/* Queue status indicator */
+.queue-status {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  padding: 8px 16px;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #92400e;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.queue-status i {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
